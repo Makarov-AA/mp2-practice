@@ -14,49 +14,52 @@ protected:
 	ValType* elm;//массив элементов вектора
 public:
 	TVector(int i_size = 0, int i_start_idx = 0);
-	TVector(const Tvector&);
+	TVector(const TVector&);
 	~TVector();
 	bool operator == (const TVector&) const;
 	bool operator != (const TVector&) const;
 	TVector operator + (const ValType&) const;
 	TVector operator - (const ValType&) const;
 	TVector operator * (const ValType&) const;
-	TVector operator + (const Tvector&) const;
-	TVector operator - (const Tvector&) const;
-	ValType operator * (const Tvector&) const;
-	ValType Length() const;
-	int size() const;
+	TVector operator + (const TVector&) const;
+	TVector operator - (const TVector&) const;
+	ValType operator * (const TVector&) const;
+	double Length() const;
+	int get_size() const;
 	int StartIdx() const;
-	friend std::ostream& operator << (std::ostream&, const TVector&);
-	friend std::istream& operator >> (std::istream&, Tvector&);
-	VallType& operator [] (int) const;
+	template <typename T> friend std::ostream& operator << (std::ostream&, const TVector<T>&);
+	template <typename T> friend std::istream& operator >> (std::istream&, TVector<T>&);
+	ValType& operator [] (int) const;
 	const TVector& operator = (const TVector&);
 };
 
 //реализация методов вектора
 
-template <class ValType>
+template <class ValType> //конструктор
 TVector<ValType>::TVector(int i_size, int i_start_idx) : size(i_size), start_idx(i_start_idx)
 {
+	if (size < 0) throw "Incorrect size";
 	if (size == 0) elm = nullptr;
 	else elm = new ValType[size];
 }
 
-template<class ValType>
-TVector<ValType>::TVector(const Tvector &) 
+template<class ValType> //конструктор копирования
+TVector<ValType>::TVector(const TVector<ValType> & c) 
 	: size(c.size), start_idx(c.start_idx)
 {
 	elm = new ValType[size];
+	for (int i = 0; i < size; i++)
+		elm[i] = c.elm[i];
 }
 
-template <class ValType>
-TVector::~TVector()
+template <class ValType> //деструктор
+TVector<ValType>::~TVector()
 {
 	delete[] elm;
 }
 
-template <class ValType>
-bool TVector<ValType>::operator == (const TVector& v) const
+template <class ValType>//сравнение
+bool TVector<ValType>::operator == (const TVector<ValType>& v) const
 {
 	if (size != v.size)
 		return false;
@@ -67,7 +70,7 @@ bool TVector<ValType>::operator == (const TVector& v) const
 }
 
 template <class ValType>
-bool TVector<ValType>::operator != (const TVector& v) const
+bool TVector<ValType>::operator != (const TVector<ValType>& v) const
 {
 	if (size != v.size)
 		return true;
@@ -78,53 +81,56 @@ bool TVector<ValType>::operator != (const TVector& v) const
 }
 
 template <class ValType>
-TVector TVector<ValType>::operator + (const ValType& c) const
+TVector<ValType> TVector<ValType>::operator + (const ValType& c) const
 {
-	TVector c_sum(*this);
-	for (int i = 0; i < size, i++)
-		c_sum.elm[i] += c;
+	TVector<ValType> c_sum(size, start_idx);
+	for (int i = 0; i < size; i++)
+		c_sum.elm[i] = elm[i] + c;
 	return c_sum;
 }
 
 template <class ValType>
-TVector TVector<ValType>::operator - (const ValType& c) const
+TVector<ValType> TVector<ValType>::operator - (const ValType& c) const
 {
-	TVector c_dif(*this);
-	for (int i = 0; i < size, i++)
+	TVector<ValType> c_dif(*this);
+	for (int i = 0; i < size; i++)
 		c_dif.elm[i] -= c;
 	return c_dif;
 }
 
 template <class ValType>
-TVector TVector<ValType>::operator * (const ValType& c) const
+TVector<ValType> TVector<ValType>::operator * (const ValType& c) const
 {
-	TVector c_mlp(*this);
-	for (int i = 0; i < size, i++)
+	TVector<ValType> c_mlp(*this);
+	for (int i = 0; i < size; i++)
 		c_mlp.elm[i] *= c;
 	return c_mlp;
 }
 
-template <class ValType>
-TVector TVector<ValType>::operator + (const TVector& v) const
+template<class ValType>
+TVector<ValType> TVector<ValType>::operator + (const TVector<ValType> & v) const
 {
-	TVector sum(size);
+	if (size != v.size) throw "Sizes do not match";
+	TVector<ValType> sum(size, start_idx);
 	for (int i = 0; i < size; i++)
 		sum.elm[i] = elm[i] + v.elm[i];
 	return sum;
 }
 
 template <class ValType>
-TVector TVector<ValType>::operator - (const TVector& v) const
+TVector<ValType> TVector<ValType>::operator - (const TVector<ValType> & v) const
 {
-	TVector dif(size);
+	if (size != v.size) throw "Sizes do not match";
+	TVector<ValType> dif(size, start_idx);
 	for (int i = 0; i < size; i++)
 		dif.elm[i] = elm[i] - v.elm[i];
 	return dif;
 }
 
-template <class ValType>
-ValType TVector<ValType>::operator * (const TVector& v) const
+template<class ValType>
+ValType TVector<ValType>::operator*(const TVector<ValType> &v) const
 {
+	if (size != v.size) throw "Sizes do not match";
 	ValType mlp(0);
 	for (int i = 0; i < size; i++)
 		mlp += elm[i] * v.elm[i];
@@ -132,16 +138,16 @@ ValType TVector<ValType>::operator * (const TVector& v) const
 }
 
 template <class ValType>
-ValType TVector<ValType>::Length() const
+double TVector<ValType>::Length() const
 {
 	ValType sum(0);
 	for (int i = 0; i < size; i++)
-		sum += elm[i];
+		sum += elm[i] * elm[i];
 	return sqrt(sum);
 }
 
 template <class ValType>
-int TVector<ValType>::size() const
+int TVector<ValType>::get_size() const
 {
 	return size;
 }
@@ -153,36 +159,37 @@ int TVector<ValType>::StartIdx() const
 }
 
 template <class ValType>
-std::ostream& operator << (std::ostream& out, const TVector& v)
+std::ostream& operator << (std::ostream& out, const TVector<ValType>& v)
 {
-	for (int i = 0; i < size - 1; i++)
+	for (int i = 0; i < v.size; i++)
 		out << v.elm[i] << ' ';
-	out << v.elm[size - 1];
 	return out;
 }
 
 template <class ValType>
-std::istream& operator >> (std::istream& in, TVector& v)
+std::istream & operator >> (std::istream & in, TVector<ValType>& v)
 {
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < v.size; i++)
 		in >> v.elm[i];
 	return in;
 }
 
 template <class ValType>
-Valtype& TVector<ValType>::operator [] (int idx) const
+ValType& TVector<ValType>::operator [] (int idx) const
 {
-	return elm[idx];
+	return elm[idx - start_idx];
 }
 
 template <class ValType>
-const TVector& TVector<ValType>::operator = (const TVector& v) : start_idx(v.start_idx)
+const TVector<ValType>& TVector<ValType>::operator = (const TVector<ValType>& v)
 {
+	start_idx = v.start_idx;
+	if (this == &v) return *this;
 	if (size != v.size)
 	{
 		delete[] elm;
 		size = v.size;
-		elm = new ValType[size]
+		elm = new ValType[size];
 	}
 	for (int i = 0; i < size; i++)
 		elm[i] = v.elm[i];

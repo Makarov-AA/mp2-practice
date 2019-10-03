@@ -171,7 +171,8 @@ TVector<ValType> TMatrix<ValType>::operator * (const TVector<ValType>& v) const
 	for (int i = 0; i < size; i++)
 		res[i] = 0;
 	for (int i = 0; i < size; i++)
-		res[i] += elm[i] * v;
+		for (int j = i; j < size; j++)
+			res[i] += elm[i][j] * v[j];
 	return res;
 }
 

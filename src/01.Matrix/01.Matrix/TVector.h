@@ -13,7 +13,7 @@ protected:
 	int start_idx;//номер столбца, с которого начинается строка
 	ValType* elm;//массив элементов вектора
 public:
-	TVector(int i_size = 0, int i_start_idx = 0);
+	TVector(int i_size = 10, int i_start_idx = 0);
 	TVector(const TVector&);
 	~TVector();
 	bool operator == (const TVector&) const;
@@ -38,9 +38,8 @@ public:
 template <class ValType> //конструктор
 TVector<ValType>::TVector(int i_size, int i_start_idx) : size(i_size), start_idx(i_start_idx)
 {
-	if (size < 0) throw "Incorrect size";
-	if (size == 0) elm = nullptr;
-	else elm = new ValType[size];
+	if (size <= 0) throw "Incorrect size";
+	elm = new ValType[size];
 }
 
 template<class ValType> //конструктор копирования
@@ -61,7 +60,7 @@ TVector<ValType>::~TVector()
 template <class ValType>//сравнение
 bool TVector<ValType>::operator == (const TVector<ValType>& v) const
 {
-	if (size != v.size)
+	if (size != v.size || start_idx != v.start_idx)
 		return false;
 	for (int i = 0; i < size; i++)
 		if (elm[i] != v[i])
@@ -72,6 +71,7 @@ bool TVector<ValType>::operator == (const TVector<ValType>& v) const
 template <class ValType>
 bool TVector<ValType>::operator != (const TVector<ValType>& v) const
 {
+	// ==
 	if (size != v.size)
 		return true;
 	for (int i = 0; i < size; i++)
@@ -110,7 +110,7 @@ TVector<ValType> TVector<ValType>::operator * (const ValType& c) const
 template<class ValType>
 TVector<ValType> TVector<ValType>::operator + (const TVector<ValType> & v) const
 {
-	if (size != v.size) throw "Sizes do not match";
+	if (size != v.size || start_idx != v.start_idx) throw "Sizes do not match";
 	TVector<ValType> sum(size, start_idx);
 	for (int i = 0; i < size; i++)
 		sum.elm[i] = elm[i] + v.elm[i];
@@ -143,7 +143,7 @@ double TVector<ValType>::Length() const
 	ValType sum(0);
 	for (int i = 0; i < size; i++)
 		sum += elm[i] * elm[i];
-	return sqrt(sum);
+	return sqrt(sum); // *
 }
 
 template <class ValType>
@@ -177,20 +177,20 @@ std::istream & operator >> (std::istream & in, TVector<ValType>& v)
 template <class ValType>
 ValType& TVector<ValType>::operator [] (int idx) const
 {
-	return elm[idx - start_idx];
+	return elm[idx - start_idx]; // out of range
 }
 
 template <class ValType>
 const TVector<ValType>& TVector<ValType>::operator = (const TVector<ValType>& v)
-{
-	start_idx = v.start_idx;
-	if (this == &v) return *this;
+{	
+	if (*this == v) return *this;
 	if (size != v.size)
 	{
 		delete[] elm;
 		size = v.size;
 		elm = new ValType[size];
 	}
+	start_idx = v.start_idx;
 	for (int i = 0; i < size; i++)
 		elm[i] = v.elm[i];
 	return *this;

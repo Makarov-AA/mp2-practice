@@ -63,16 +63,26 @@ int main()
 		}
 		case 2:
 		{
-			TMatrix<int> a(5), b(5);
-			TVector<int> v(5);
+			TVector<TVector<double> > VA(5);
+			TMatrix<double> b(5);
+			TVector<double> v(5);
+			for (int i = 0; i < 5; i++)
+			{
+				TVector<double> temp(5 - i, i);
+				for (int j = i; j < 5; j++)
+					temp[j] = i * j + 7;
+				VA[i] = temp;
+			}
 			for (int i = 3; i < 8; i++)
 				for (int j = i; j < 8; j++)
-				{
-					a[i - 3][j - 3] = i * 10 + j;
 					b[i - 3][j - 3] = (i * 11 + j) * 2 - 29;
-				}
 			for (int i = 5; i < 10; i++)
 				v[i - 5] = (i + 7) * 5 - 28;
+			std::cout << "Vector<Vector> a = " << std::endl;
+			for (int i = 0; i < 5; i++)
+				std::cout << VA[i] << std::endl;
+			std::cout << "Converting Vector<Vector> A into matrix A" << std::endl;
+			TMatrix<double> a(VA);
 			std::cout << "Matrix a = " << std::endl << a << std::endl;
 			std::cout << "Determinant a = " << a.determinant() << std::endl << std::endl;
 			std::cout << "Matrix b = " << std::endl << b << std::endl;
@@ -93,3 +103,25 @@ int main()
 	}
 	return 0;
 }
+
+
+
+/*TVector<double> v1(1, 4);
+			v1[4] = 5;
+			TVector<double> v2(2, 3);
+			for (int i = 3; i < 5; i++)
+				v2[i] = (i + 3) * 2;
+			TVector<double> v3(3, 2);
+			for (int i = 2; i < 5; i++)
+				v3[i] = (i + 3) * 2;
+			TVector<double> v4(4, 1);
+			for (int i = 1; i < 5; i++)
+				v4[i] = (i + 3) * 2;
+			TVector<double> v5(5, 0);
+			for (int i = 0; i < 5; i++)
+				v5[i] = (i + 3) * 2;
+			VA[0] = v5;
+			VA[1] = v4;
+			VA[2] = v3;
+			VA[3] = v2;
+			VA[4] = v1;*/

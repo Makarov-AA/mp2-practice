@@ -42,7 +42,7 @@ int main()
 				std::cout << "Length v = " << v.Length() << std::endl;
 				TMatrix<double> C(A);
 				C = C + B;
-				std::cout << "Matrix Ñ = A + B = " << std::endl;
+				std::cout << "Matrix C = A + B = " << std::endl;
 				std::cout << A + B << std::endl;
 				std::cout << "Matrix A * B = " << std::endl;
 				std::cout << A * B << std::endl;
@@ -93,8 +93,9 @@ int main()
 			std::cout << "Matrix a - 10 = " << std::endl << a - 10 << std::endl;
 			std::cout << "Matrix a * 10 = " << std::endl << a * 10 << std::endl;
 			std::cout << "Vector v = " << std::endl << v << std::endl << std::endl;
-			std::cout << "Vector a * v = " << std::endl << a * v << std::endl;
 			std::cout << "Length = " << v.Length() << std::endl;
+			std::cout << "Vector a * v = " << std::endl << a * v << std::endl;
+			std::cout << "Length = " << (a * v).Length() << std::endl;
 			break;
 		}
 		default:
@@ -103,25 +104,3 @@ int main()
 	}
 	return 0;
 }
-
-
-
-/*TVector<double> v1(1, 4);
-			v1[4] = 5;
-			TVector<double> v2(2, 3);
-			for (int i = 3; i < 5; i++)
-				v2[i] = (i + 3) * 2;
-			TVector<double> v3(3, 2);
-			for (int i = 2; i < 5; i++)
-				v3[i] = (i + 3) * 2;
-			TVector<double> v4(4, 1);
-			for (int i = 1; i < 5; i++)
-				v4[i] = (i + 3) * 2;
-			TVector<double> v5(5, 0);
-			for (int i = 0; i < 5; i++)
-				v5[i] = (i + 3) * 2;
-			VA[0] = v5;
-			VA[1] = v4;
-			VA[2] = v3;
-			VA[3] = v2;
-			VA[4] = v1;*/

@@ -62,12 +62,7 @@ bool TMatrix<ValType>::operator == (const TMatrix<ValType>& m) const
 template <class ValType>
 bool TMatrix<ValType>::operator != (const TMatrix<ValType>& m) const
 {
-	if (size != m.size)
-		return true;
-	for (int i = 0; i < size; i++)
-		if (elm[i] != m[i])
-			return true;
-	return false; // ==
+	return !(*this == m);
 }
 
 template <class ValType>
@@ -118,14 +113,20 @@ template<class ValType>
 TMatrix<ValType> TMatrix<ValType>::operator + (const TMatrix<ValType> & m) const
 {
 	if (size != m.size) throw "Sizes do not match";
-	return TVector<TVector<ValType> >::operator+(m);
+	TMatrix sum(size);
+	for (int i = 0; i < size; i++)
+		sum[i] = elm[i] + m[i];
+	return sum;
 }
 
 template<class ValType>
 TMatrix<ValType> TMatrix<ValType>::operator - (const TMatrix<ValType> & m) const
 {
 	if (size != m.size) throw "Sizes do not match";
-	return TVector<TVector<ValType> >::operator-(m);
+	TMatrix dif(size);
+	for (int i = 0; i < size; i++)
+	dif[i] = elm[i] - m[i];
+	return dif;
 }
 
 template<class ValType>
@@ -133,7 +134,6 @@ TMatrix<ValType> TMatrix<ValType>::operator * (const TMatrix<ValType> & m) const
 {
 	if (size != m.size) throw "Sizes do not match";
 	TMatrix<ValType> mlp(size);
-	
 	for (int i = 0; i < size; i++)
 		for (int j = i; j < size; j++)
 		{
@@ -147,10 +147,8 @@ TMatrix<ValType> TMatrix<ValType>::operator * (const TMatrix<ValType> & m) const
 template <class ValType>
 std::ostream& operator << (std::ostream& out, const TMatrix<ValType>& m)
 {
-		for (int i = 0; i < m.size; i++)
-		{
+	for (int i = 0; i < m.size; i++)
 			out << m.elm[i] << std::endl;
-		}
 	return out;
 }
 

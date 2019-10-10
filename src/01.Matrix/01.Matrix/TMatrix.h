@@ -36,7 +36,6 @@ template <class ValType>
 TMatrix<ValType>::TMatrix(int i_size)
 	: TVector<TVector<ValType> >(i_size)
 {
-	if (i_size < 2) throw "Intorrect size of matrix";
 	for (int i = 0; i < size; i++)
 		elm[i] = TVector<ValType>(size - i, i);
 }
@@ -63,17 +62,13 @@ bool TMatrix<ValType>::operator == (const TMatrix<ValType>& m) const
 template <class ValType>
 bool TMatrix<ValType>::operator != (const TMatrix<ValType>& m) const
 {
-	if (size != m.size)
-		return true;
-	for (int i = 0; i < size; i++)
-		if (elm[i] != m[i])
-			return true;
-	return false;
+	return !(*this == m);
 }
 
 template <class ValType>
 const TMatrix<ValType>& TMatrix<ValType>::operator = (const TMatrix<ValType>& m)
 {
+	//!!!
 	if (this == &m) return *this;
 	if (size != m.size)
 	{
@@ -118,14 +113,20 @@ template<class ValType>
 TMatrix<ValType> TMatrix<ValType>::operator + (const TMatrix<ValType> & m) const
 {
 	if (size != m.size) throw "Sizes do not match";
-	return TVector<TVector<ValType> >::operator+(m);
+	TMatrix sum(size);
+	for (int i = 0; i < size; i++)
+		sum[i] = elm[i] + m[i];
+	return sum;
 }
 
 template<class ValType>
 TMatrix<ValType> TMatrix<ValType>::operator - (const TMatrix<ValType> & m) const
 {
 	if (size != m.size) throw "Sizes do not match";
-	return TVector<TVector<ValType> >::operator-(m);
+	TMatrix dif(size);
+	for (int i = 0; i < size; i++)
+	dif[i] = elm[i] - m[i];
+	return dif;
 }
 
 template<class ValType>
@@ -135,23 +136,19 @@ TMatrix<ValType> TMatrix<ValType>::operator * (const TMatrix<ValType> & m) const
 	TMatrix<ValType> mlp(size);
 	for (int i = 0; i < size; i++)
 		for (int j = i; j < size; j++)
+		{
 			mlp[i][j] = 0;
-	for (int i = 0; i < size; i++)
-		for (int j = i; j < size; j++)
 			for (int k = i; k < j + 1; k++)
 				mlp[i][j] += elm[i][k] * m[k][j];
+		}
 	return mlp;
 }
 
 template <class ValType>
 std::ostream& operator << (std::ostream& out, const TMatrix<ValType>& m)
 {
-		for (int i = 0; i < m.size; i++)
-		{
-			for (int j = 0; j < i; j++)
-				out << 0 << ' ';
+	for (int i = 0; i < m.size; i++)
 			out << m.elm[i] << std::endl;
-		}
 	return out;
 }
 
@@ -169,10 +166,11 @@ TVector<ValType> TMatrix<ValType>::operator * (const TVector<ValType>& v) const
 	if (size != v.get_size()) throw "Sizes do not match";
 	TVector<ValType> res(v.get_size());
 	for (int i = 0; i < size; i++)
+	{
 		res[i] = 0;
-	for (int i = 0; i < size; i++)
 		for (int j = i; j < size; j++)
 			res[i] += elm[i][j] * v[j];
+	}
 	return res;
 }
 

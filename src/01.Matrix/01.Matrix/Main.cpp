@@ -42,7 +42,7 @@ int main()
 				std::cout << "Length v = " << v.Length() << std::endl;
 				TMatrix<double> C(A);
 				C = C + B;
-				std::cout << "Matrix Ñ = A + B = " << std::endl;
+				std::cout << "Matrix C = A + B = " << std::endl;
 				std::cout << A + B << std::endl;
 				std::cout << "Matrix A * B = " << std::endl;
 				std::cout << A * B << std::endl;
@@ -63,16 +63,26 @@ int main()
 		}
 		case 2:
 		{
-			TMatrix<int> a(5), b(5);
-			TVector<int> v(5);
+			TVector<TVector<double> > VA(5);
+			TMatrix<double> b(5);
+			TVector<double> v(5);
+			for (int i = 0; i < 5; i++)
+			{
+				TVector<double> temp(5 - i, i);
+				for (int j = i; j < 5; j++)
+					temp[j] = i * j + 7;
+				VA[i] = temp;
+			}
 			for (int i = 3; i < 8; i++)
 				for (int j = i; j < 8; j++)
-				{
-					a[i - 3][j - 3] = i * 10 + j;
 					b[i - 3][j - 3] = (i * 11 + j) * 2 - 29;
-				}
 			for (int i = 5; i < 10; i++)
 				v[i - 5] = (i + 7) * 5 - 28;
+			std::cout << "Vector<Vector> a = " << std::endl;
+			for (int i = 0; i < 5; i++)
+				std::cout << VA[i] << std::endl;
+			std::cout << "Converting Vector<Vector> A into matrix A" << std::endl;
+			TMatrix<double> a(VA);
 			std::cout << "Matrix a = " << std::endl << a << std::endl;
 			std::cout << "Determinant a = " << a.determinant() << std::endl << std::endl;
 			std::cout << "Matrix b = " << std::endl << b << std::endl;
@@ -83,8 +93,9 @@ int main()
 			std::cout << "Matrix a - 10 = " << std::endl << a - 10 << std::endl;
 			std::cout << "Matrix a * 10 = " << std::endl << a * 10 << std::endl;
 			std::cout << "Vector v = " << std::endl << v << std::endl << std::endl;
-			std::cout << "Vector a * v = " << std::endl << a * v << std::endl;
 			std::cout << "Length = " << v.Length() << std::endl;
+			std::cout << "Vector a * v = " << std::endl << a * v << std::endl;
+			std::cout << "Length = " << (a * v).Length() << std::endl;
 			break;
 		}
 		default:

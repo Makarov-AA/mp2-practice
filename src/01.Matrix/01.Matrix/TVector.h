@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <iomanip>
 
 //Шаблон вектора
 
@@ -13,7 +14,7 @@ protected:
 	int start_idx;//номер столбца, с которого начинается строка
 	ValType* elm;//массив элементов вектора
 public:
-	TVector(int i_size = 0, int i_start_idx = 0);
+	TVector(int i_size = 10, int i_start_idx = 0);
 	TVector(const TVector&);
 	~TVector();
 	bool operator == (const TVector&) const;
@@ -38,9 +39,8 @@ public:
 template <class ValType> //конструктор
 TVector<ValType>::TVector(int i_size, int i_start_idx) : size(i_size), start_idx(i_start_idx)
 {
-	if (size < 0) throw "Incorrect size";
-	if (size == 0) elm = nullptr;
-	else elm = new ValType[size];
+	if (size <= 0) throw "Incorrect size";
+	elm = new ValType[size];
 }
 
 template<class ValType> //конструктор копирования
@@ -61,7 +61,7 @@ TVector<ValType>::~TVector()
 template <class ValType>//сравнение
 bool TVector<ValType>::operator == (const TVector<ValType>& v) const
 {
-	if (size != v.size)
+	if (size != v.size || start_idx != v.start_idx)
 		return false;
 	for (int i = 0; i < size; i++)
 		if (elm[i] != v[i])
@@ -72,12 +72,7 @@ bool TVector<ValType>::operator == (const TVector<ValType>& v) const
 template <class ValType>
 bool TVector<ValType>::operator != (const TVector<ValType>& v) const
 {
-	if (size != v.size)
-		return true;
-	for (int i = 0; i < size; i++)
-		if (elm[i] != v[i])
-			return true;
-	return false;
+	return !(*this == v);
 }
 
 template <class ValType>
@@ -110,7 +105,7 @@ TVector<ValType> TVector<ValType>::operator * (const ValType& c) const
 template<class ValType>
 TVector<ValType> TVector<ValType>::operator + (const TVector<ValType> & v) const
 {
-	if (size != v.size) throw "Sizes do not match";
+	if (size != v.size || start_idx != v.start_idx) throw "Sizes do not match";
 	TVector<ValType> sum(size, start_idx);
 	for (int i = 0; i < size; i++)
 		sum.elm[i] = elm[i] + v.elm[i];
@@ -120,7 +115,7 @@ TVector<ValType> TVector<ValType>::operator + (const TVector<ValType> & v) const
 template <class ValType>
 TVector<ValType> TVector<ValType>::operator - (const TVector<ValType> & v) const
 {
-	if (size != v.size) throw "Sizes do not match";
+	if (size != v.size || start_idx != v.start_idx) throw "Sizes do not match";
 	TVector<ValType> dif(size, start_idx);
 	for (int i = 0; i < size; i++)
 		dif.elm[i] = elm[i] - v.elm[i];
@@ -130,7 +125,7 @@ TVector<ValType> TVector<ValType>::operator - (const TVector<ValType> & v) const
 template<class ValType>
 ValType TVector<ValType>::operator*(const TVector<ValType> &v) const
 {
-	if (size != v.size) throw "Sizes do not match";
+	if (size != v.size || start_idx != v.start_idx) throw "Sizes do not match";
 	ValType mlp(0);
 	for (int i = 0; i < size; i++)
 		mlp += elm[i] * v.elm[i];
@@ -140,10 +135,7 @@ ValType TVector<ValType>::operator*(const TVector<ValType> &v) const
 template <class ValType>
 double TVector<ValType>::Length() const
 {
-	ValType sum(0);
-	for (int i = 0; i < size; i++)
-		sum += elm[i] * elm[i];
-	return sqrt(sum);
+	return sqrt((*this) * (*this)); 
 }
 
 template <class ValType>
@@ -161,8 +153,10 @@ int TVector<ValType>::StartIdx() const
 template <class ValType>
 std::ostream& operator << (std::ostream& out, const TVector<ValType>& v)
 {
+	for (int i = 0; i < v.start_idx; i++)
+		out << "     ";
 	for (int i = 0; i < v.size; i++)
-		out << v.elm[i] << ' ';
+		out << std::setw(4) << std::left << v.elm[i] << ' ';
 	return out;
 }
 
@@ -177,13 +171,13 @@ std::istream & operator >> (std::istream & in, TVector<ValType>& v)
 template <class ValType>
 ValType& TVector<ValType>::operator [] (int idx) const
 {
+	if (idx >= size + start_idx || idx < start_idx) throw "Out of range";
 	return elm[idx - start_idx];
 }
 
 template <class ValType>
 const TVector<ValType>& TVector<ValType>::operator = (const TVector<ValType>& v)
-{
-	start_idx = v.start_idx;
+{	
 	if (this == &v) return *this;
 	if (size != v.size)
 	{
@@ -191,6 +185,7 @@ const TVector<ValType>& TVector<ValType>::operator = (const TVector<ValType>& v)
 		size = v.size;
 		elm = new ValType[size];
 	}
+	start_idx = v.start_idx;
 	for (int i = 0; i < size; i++)
 		elm[i] = v.elm[i];
 	return *this;

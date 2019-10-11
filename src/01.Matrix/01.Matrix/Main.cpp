@@ -84,7 +84,7 @@ int main()
 			std::cout << "Converting Vector<Vector> A into matrix A" << std::endl;
 			TMatrix<double> a(VA);
 			std::cout << "Matrix a = " << std::endl << a << std::endl;
-			std::cout << "Determinant a = " << a.determinant() << std::endl << std::endl;
+			std::cout << "Determinant a = " << a.determinant() << std::endl;
 			std::cout << "Matrix b = " << std::endl << b << std::endl;
 			std::cout << "Matrix a + b = " << std::endl << a + b << std::endl;
 			std::cout << "Matrix a - b = " << std::endl << a - b << std::endl;
@@ -92,7 +92,7 @@ int main()
 			std::cout << "Matrix a + 10 = " << std::endl << a + 10 << std::endl;
 			std::cout << "Matrix a - 10 = " << std::endl << a - 10 << std::endl;
 			std::cout << "Matrix a * 10 = " << std::endl << a * 10 << std::endl;
-			std::cout << "Vector v = " << std::endl << v << std::endl << std::endl;
+			std::cout << "Vector v = " << std::endl << v << std::endl;
 			std::cout << "Length = " << v.Length() << std::endl;
 			std::cout << "Vector a * v = " << std::endl << a * v << std::endl;
 			std::cout << "Length = " << (a * v).Length() << std::endl;

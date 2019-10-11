@@ -178,7 +178,7 @@ ValType& TVector<ValType>::operator [] (int idx) const
 template <class ValType>
 const TVector<ValType>& TVector<ValType>::operator = (const TVector<ValType>& v)
 {	
-	if (this == &v) return *this;
+	if (*this == v) return *this;
 	if (size != v.size)
 	{
 		delete[] elm;

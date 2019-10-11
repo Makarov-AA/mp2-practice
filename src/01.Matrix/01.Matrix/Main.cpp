@@ -85,6 +85,10 @@ int main()
 			TMatrix<double> a(VA);
 			std::cout << "Matrix a = " << std::endl << a << std::endl;
 			std::cout << "Determinant a = " << a.determinant() << std::endl;
+			std::cout << "Copy constructor testing" << std::endl;
+			std::cout << "Matrix c = a:" << std::endl;
+			/*TMatrix<double> c(a);
+			std::cout << c << std::endl;*/
 			std::cout << "Matrix b = " << std::endl << b << std::endl;
 			std::cout << "Matrix a + b = " << std::endl << a + b << std::endl;
 			std::cout << "Matrix a - b = " << std::endl << a - b << std::endl;

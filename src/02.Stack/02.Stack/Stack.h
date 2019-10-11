@@ -19,7 +19,7 @@ public:
 };
 
 template <class ValType>
-Stack<ValType>::Stack(int max = 10) : size(max), top(0)
+Stack<ValType>::Stack(int max) : size(max), top(0)
 {
 	elm = new Valtype[size];
 }

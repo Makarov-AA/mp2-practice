@@ -13,12 +13,13 @@ public:
 	~Stack();
 	void Push(ValType);
 	ValType Pop();
+	ValType CheckTop();
 	bool IsEmpty() const;
 	bool IsFull() const;
 };
 
 template <class ValType>
-Stack<ValType>::Stack(int max) : size(max), top(0)
+Stack<ValType>::Stack(int max = 10) : size(max), top(0)
 {
 	elm = new Valtype[size];
 }
@@ -51,6 +52,14 @@ ValType Stack<ValType>::Pop()
 	if (IsEmpty())
 		throw "Empty Stack";
 	return elm[--top];
+}
+
+template <class ValType>
+ValType Stack<ValType>::CheckTop()
+{
+	if (IsEmpty())
+		throw "Empty Stack";
+	return elm[top - 1];
 }
 
 template <class ValType>

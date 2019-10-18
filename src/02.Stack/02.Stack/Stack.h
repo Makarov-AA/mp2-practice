@@ -16,18 +16,19 @@ public:
 	ValType CheckTop();
 	bool IsEmpty() const;
 	bool IsFull() const;
+	int Top() const;
 };
 
 template <class ValType>
 Stack<ValType>::Stack(int max) : size(max), top(0)
 {
-	elm = new Valtype[size];
+	elm = new ValType[size];
 }
 
 template <class ValType>
 Stack<ValType>::Stack(const Stack& c) : size(c.size), top(c.top)
 {
-	elm = new Valtype[size];
+	elm = new ValType[size];
 	for (int i = 0; i < top; i++)
 		elm[i] = c.elm[i];
 }
@@ -75,3 +76,6 @@ bool Stack<ValType>::IsFull() const
 	if (top == size) return true;
 	return false;
 }
+
+template <class ValType>
+int Stack<ValType>::Top() const { return top; }

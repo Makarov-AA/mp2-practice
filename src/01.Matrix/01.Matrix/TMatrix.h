@@ -114,6 +114,9 @@ TMatrix<ValType> TMatrix<ValType>::operator + (const TMatrix<ValType> & m) const
 	if (size != m.size) throw "Sizes do not match";
 	TMatrix sum(size);
 	for (int i = 0; i < size; i++)
+		for (int j = i; j < size; j++)
+			sum[i][j] = 0;
+	for (int i = 0; i < size; i++)
 		sum[i] = elm[i] + m[i];
 	return sum;
 }

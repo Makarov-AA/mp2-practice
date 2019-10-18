@@ -64,7 +64,7 @@ bool TVector<ValType>::operator == (const TVector<ValType>& v) const
 	if (size != v.size || start_idx != v.start_idx)
 		return false;
 	for (int i = 0; i < size; i++)
-		if (elm[i] != v[i])
+		if (elm[i] != v.elm[i])
 			return false;
 	return true;
 }

@@ -69,13 +69,13 @@ std::string PostfixForm::Postfix(std::string s)
 		}
 	while (!(a.IsEmpty()))
 		b.Push(a.Pop());
-	std::string tmp;
+	std::string result;
 	int length = b.Top();
 	for (int i = 0; i < length; i++)
-		tmp[i] = b.Pop();
-	std::string result;
-	for (int i = 0; i < length; i++)
-		result[i] = tmp[length - i - 1];
+	{
+		char c = b.Pop();
+		result.insert(0, &c);
+	}
 	return result;
 }
 

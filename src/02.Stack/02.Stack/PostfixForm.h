@@ -21,4 +21,5 @@ public:
 	static int PriorCheck(char);
 	static std::string Postfix(std::string);
 	static double Compute(std::string);
+	static std::string Normalize(std::string);
 };

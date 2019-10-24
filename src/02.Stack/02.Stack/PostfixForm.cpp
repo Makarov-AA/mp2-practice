@@ -11,24 +11,31 @@ Symbol PostfixForm::Type(char c)
 
 bool PostfixForm::Check(std::string s)//проверка строки
 {	
-	if (Type(s[0]) != Symbol::letter && Type(s[0]) != Symbol::close_bracket) return false;//проверка первого символа выражения
+	if (s.size() == 1) return false;
+	if (Type(s[0]) != Symbol::letter && Type(s[0]) != Symbol::open_bracket) return false;//проверка первого символа выражения
 	if (Type(s[s.size() - 1]) != Symbol::letter && Type(s[s.size() - 1]) != Symbol::close_bracket) return false;//проверка последнего символа выражения
-	int open(0), close(0);
-	for (int i = 0; i < (int)(s.size() - 1); i++)
+	for (unsigned int i = 0; i < (s.size() - 1); i++)
 	{
-		if (Type(s[i]) == Symbol::incorrect) return false; //проверка на корректность символа
-		if (Type(s[i]) == Symbol::letter && Type(s[i + 1]) == Symbol::letter) return false;//проверка односимвольности операндов
+		if (Type(s[i]) == Symbol::incorrect) 
+			return false; //проверка на корректность символа
+		if (Type(s[i]) == Symbol::letter && Type(s[i + 1]) == Symbol::letter) 
+			return false;//проверка односимвольности операндов
+		if (Type(s[i]) == Symbol::operation && Type(s[i + 1]) == Symbol::operation)
+			return false;//проверка, что две операции не идут друг за другом
+	}
+	int open(0), close(0);
+	for (unsigned int i = 0; i < s.size(); i++)
+	{
 		if (Type(s[i]) == Symbol::open_bracket) open++;
 		if (Type(s[i]) == Symbol::close_bracket) close++;
-		if (Type(s[i]) == Symbol::operation && Type(s[i + 1]) == Symbol::operation) return false;//проверка, что две операции не идут друг за другом
 	}
-	if (open != close) return false;//проверка на одинаковое число закрывающихся и открывающихся скобок
+	if (open != close) 
+		return false;//проверка на одинаковое число закрывающихся и открывающихся скобок
 	return true;
 }
 
 int PostfixForm::PriorCheck(char c)
 {
-	if (Type(c) == Symbol::incorrect) throw "Incorrect Symbol";
 	if (c == '*' || c == '/') return 3;
 	if (c == '+' || c == '-') return 2;
 	if (c == '(') return 1;
@@ -62,20 +69,20 @@ std::string PostfixForm::Postfix(std::string s)
 			a.Push(s[i]);
 			break;
 		case Symbol::close_bracket:
-			while (Type(s[i]) != Symbol::open_bracket)
+			while (Type(a.CheckTop()) != Symbol::open_bracket)
 				b.Push(a.Pop());
 			a.Pop();
 			break;
 		}
 	while (!(a.IsEmpty()))
 		b.Push(a.Pop());
-	std::string result;
 	int length = b.Top();
-	for (int i = 0; i < length; i++)
-	{
-		char c = b.Pop();
-		result.insert(0, &c);
-	}
+	char* tmp = new char[length + 1];
+	for (int i = length - 1; i > -1; i--)
+		tmp[i] = b.Pop();
+	tmp[length] = '\0';
+	std::string result;
+	result = tmp;
 	return result;
 }
 
@@ -95,25 +102,50 @@ double PostfixForm::Compute(std::string s)
 		{
 			switch (s[i])
 			{
-			case '+':
-				tmp = res.Pop() + res.Pop();
-				break;
-			case '-':
-				tmp = res.Pop() - res.Pop();
-				break;
-			case '*':
-				tmp = res.Pop() * res.Pop();
-				break;
-			case '/':
-				double a, b;
-				a = res.Pop();
-				b = res.Pop();
-				if (b == 0) throw "Zero division";
-				tmp = a / b;
-				break;
+				case '+':
+				{
+					double v1 = res.Pop(), v2 = res.Pop();
+					tmp = v2 + v1;
+					break;
+				}
+				case '-':
+				{
+					double v1 = res.Pop(), v2 = res.Pop();
+					tmp = v2 - v1;
+					break;
+				}
+				case '*':
+				{
+					double v1 = res.Pop(), v2 = res.Pop();
+					tmp = v2 * v1;
+					break;
+				}
+				case '/':
+				{
+					double v1 = res.Pop(), v2 = res.Pop();
+					if (v1 == 0) throw "Zero division";
+					tmp = v2 / v1;
+					break;
+				}
 			}
 			res.Push(tmp);
 		}
 	}
 	return res.Pop();
+}
+
+std::string PostfixForm::Normalize(std::string s)
+{
+	for (unsigned int i = 0; i < s.size(); i++)
+		if (s[i] == ' ')  s.erase(i, 1);
+	for (unsigned int i = 0; i < s.size(); i++)
+	{
+		if ((i != 0) && (s[i] == '(') && (Type(s[i - 1]) == Symbol::letter))
+			s.insert(i, 1, '*');
+		if ((i != (s.size() - 1)) && (s[i] == ')') && (Type(s[i + 1]) == Symbol::letter))
+			s.insert(i + 1, 1, '*');
+		if ((i != (s.size() - 1)) && (Type(s[i]) == Symbol::letter) && (Type(s[i + 1]) == Symbol::letter))
+			s.insert(i + 1, 1, '*');
+	}
+	return s;
 }

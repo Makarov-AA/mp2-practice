@@ -1,10 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.852
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04.ListStack", "04.ListStack\04.ListStack.vcxproj", "{D428FC80-FA63-4611-AE03-30B58EDCFD2A}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D428FC80-FA63-4611-AE03-30B58EDCFD2A}.Debug|x64.ActiveCfg = Debug|x64
+		{D428FC80-FA63-4611-AE03-30B58EDCFD2A}.Debug|x64.Build.0 = Debug|x64
+		{D428FC80-FA63-4611-AE03-30B58EDCFD2A}.Debug|x86.ActiveCfg = Debug|Win32
+		{D428FC80-FA63-4611-AE03-30B58EDCFD2A}.Debug|x86.Build.0 = Debug|Win32
+		{D428FC80-FA63-4611-AE03-30B58EDCFD2A}.Release|x64.ActiveCfg = Release|x64
+		{D428FC80-FA63-4611-AE03-30B58EDCFD2A}.Release|x64.Build.0 = Release|x64
+		{D428FC80-FA63-4611-AE03-30B58EDCFD2A}.Release|x86.ActiveCfg = Release|Win32
+		{D428FC80-FA63-4611-AE03-30B58EDCFD2A}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0884373-B525-44DE-9591-6F272C94ED39}
 	EndGlobalSection
 EndGlobal

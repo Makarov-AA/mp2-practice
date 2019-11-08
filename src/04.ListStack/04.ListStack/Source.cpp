@@ -1,34 +1,48 @@
 #include "List.h"
 #include <iostream>
+#include <stdlib.h>
+#include <string>
+#include "PostfixForm.h"
 
 int main()
 {
-	TList<int, int> list;
-	int* a = new int[5];
-	for (int i = 0; i < 5; i++)
+	int mode(2);
+	std::string s;
+	while (mode == 1 || mode == 2)
 	{
-		a[i] = i;
-		list.InsertEnd(i, (a + i));
+		try
+		{
+			std::cout << "Input mode: 1 - manual input, 2 - auto input" << std::endl;
+			std::cout << "Input any other value to close the program" << std::endl;
+			std::cin >> mode;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			switch (mode)
+			{
+			case 1:
+			{
+				std::cout << "Input expression" << std::endl;
+				std::getline(std::cin, s);
+				std::string norm = PostfixForm::Normalize(s);
+				std::string post = PostfixForm::Postfix(norm);
+				std::cout << "Postfix form: " << post << std::endl;
+				std::cout << "Result " << PostfixForm::Compute(post) << std::endl;
+				break;
+			}
+			case 2:
+			{
+				std::cout << "A+B*C-D/E" << std::endl;
+				s = "A+B*C-D/E";
+				std::string post = PostfixForm::Postfix(s);
+				std::cout << "Postfix form: " << post << std::endl;
+				std::cout << "Result " << PostfixForm::Compute(post) << std::endl;
+				break;
+			}
+			}
+		}
+		catch (const char* c)
+		{
+			std::cout << c << std::endl;
+		}
 	}
-	for (int i = 0; i < 5; i++)
-		std::cout << *(list.Search(i)->data) << ' ';
-	int* b = new int[6];
-	for (int i = 5; i < 10; i++)
-	{
-		b[i - 5] = i;
-		if (i % 2 == 0) list.InsertBefore(i - 5, i, (b + i - 5));
-		else
-			list.InsertAfter(i - 5, i, (b + i - 5));
-	}
-	b[5] = 10;
-	list.InsertBefore(0, 10, (b + 5));
-	std::cout << std::endl;
-	list.Print();
-	std::cout << std::endl;
-	list.Remove(10);
-	list.Print();
-	std::cout << std::endl;
-	list.Remove(9);
-	list.Print();
 	return 0;
 }

@@ -116,8 +116,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="List.h" />
+    <ClInclude Include="PostfixForm.h" />
+    <ClInclude Include="TStack.h" />
+    <ClInclude Include="TStackArray.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PostfixForm.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

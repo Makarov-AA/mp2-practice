@@ -3,6 +3,7 @@
 Symbol PostfixForm::Type(char c)
 {
 	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) return Symbol::letter;
+	if (c >= 48 && c <= 57) return Symbol::number;
 	if ((c == '*') || (c == '/') || (c == '+') || (c == '-')) return Symbol::operation;
 	if (c == '(') return Symbol::open_bracket;
 	if (c == ')') return Symbol::close_bracket;
@@ -148,4 +149,35 @@ std::string PostfixForm::Normalize(std::string s)
 			s.insert(i + 1, 1, '*');
 	}
 	return s;
+}
+
+int  PostfixForm::OperandsCount(std::string expr)
+{
+	int count;
+	for (int i = 0; i < expr.size(); i++)
+	{
+		if (Type(expr[i]) == Symbol::letter || Type(expr[i]) == Symbol::number)
+		{
+			count++;
+			while (Type(expr[i]) < Symbol::operation || i < expr.size)
+				i++;
+		}
+	}
+	return count;
+}
+
+Operand* PostfixForm::Values(std::string expr)
+{
+	int count = OperandsCount(expr);
+	Operand* values = new Operand[count];
+	int j = 0;
+	for (int i = 0; i < expr.size(); i++)
+	{
+		if (Type(expr[i]) == Symbol::letter || Type(expr[i]) == Symbol::number)
+			while (Type(expr[i]) < Symbol::operation || i < expr.size)
+			{
+				values[j].name.
+				i++;
+			}
+	}
 }

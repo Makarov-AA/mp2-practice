@@ -22,6 +22,7 @@ int main()
 				std::cout << "Input expression" << std::endl;
 				std::getline(std::cin, s);
 				std::string norm = PostfixForm::Normalize(s);
+				std::cout << "Normilized form: " << norm << std::endl;
 				std::string post = PostfixForm::Postfix(norm);
 				std::cout << "Postfix form: " << post << std::endl;
 				std::cout << "Result " << PostfixForm::Compute(post) << std::endl;

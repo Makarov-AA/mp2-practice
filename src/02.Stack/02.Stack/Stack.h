@@ -12,11 +12,10 @@ public:
 	Stack(const Stack&);
 	~Stack();
 	void Push(ValType);
-	ValType Pop();
-	ValType CheckTop();
+	void Pop();//убрал возвращение значения из изъятия верхнего
 	bool IsEmpty() const;
 	bool IsFull() const;
-	int Top() const;
+	ValType Top() const;//убрал метод возвращения текущего кол-ва элементов в стеке
 };
 
 template <class ValType>
@@ -48,19 +47,12 @@ void Stack<ValType>::Push(ValType e)
 }
 
 template <class ValType>
-ValType Stack<ValType>::Pop()
+void Stack<ValType>::Pop()
 {
 	if (IsEmpty())
 		throw "Empty Stack";
-	return elm[--top];
-}
-
-template <class ValType>
-ValType Stack<ValType>::CheckTop()
-{
-	if (IsEmpty())
-		throw "Empty Stack";
-	return elm[top - 1];
+	top--;
+	return;
 }
 
 template <class ValType>
@@ -78,4 +70,9 @@ bool Stack<ValType>::IsFull() const
 }
 
 template <class ValType>
-int Stack<ValType>::Top() const { return top; }
+ValType Stack<ValType>::Top() const 
+{
+	if (IsEmpty())
+		throw "Empty Stack";
+	return elm[top - 1];
+}

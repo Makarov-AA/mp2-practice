@@ -22,18 +22,18 @@ private:
 	TNode<TKey, TData>* pCurrent;
 	void Reset();
 	void Next();
+	bool IsEnded() const;
 public:
 	TList();
-	TList(const TList&);
-	TList(const TNode<TKey, TData>*);
+	TList(TList&);
+	TList(TNode<TKey, TData>*);
 	~TList();
 	TNode<TKey, TData>* Search(TKey);
 	void InsertStart(TKey, TData*);
 	void InsertEnd(TKey, TData*);
-	void InsertBefore(TKey, TKey, TData*);
-	void InsertAfter(TKey, TKey, TData*);
+	void InsertBefore(TKey search_key, TKey, TData*);
+	void InsertAfter(TKey search_key, TKey, TData*);
 	void Remove(TKey);
-	bool IsEnded() const;
 	void Print();
 };
 
@@ -47,19 +47,20 @@ TList<TKey, TData>::TList()
 }
 
 template <class TKey, class TData>
-TList<TKey, TData>::TList(const TList& copy)
+TList<TKey, TData>::TList(TList& copy)
 {
 	copy.Reset();
 	while (!copy.IsEnded())
 	{
-		InsertEnd(pCurrent->key, pCurrent->data);
+		InsertEnd(copy.pCurrent->key, copy.pCurrent->data);
 		copy.Next();
 	}
+	InsertEnd(copy.pCurrent->key, copy.pCurrent->data);
 	Reset();
 }
 
 template <class TKey, class TData>
-TList<TKey, TData>::TList(const TNode<TKey, TData>* node)
+TList<TKey, TData>::TList(TNode<TKey, TData>* node)
 {
 	pFirst = node;
 	pCNext = node->pNext;
@@ -170,6 +171,7 @@ void TList<TKey, TData>::InsertAfter(TKey search_key, TKey new_key, TData* new_d
 template <class TKey, class TData>
 void TList<TKey, TData>::Remove(TKey search_key)
 {
+	if (pFirst == nullptr) throw "Empty list";
 	if (Search(search_key) != nullptr)
 	{
 		delete pCurrent->data;

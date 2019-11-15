@@ -83,29 +83,20 @@ std::string PostfixForm::Postfix(std::string s)
 		b.Push(a.Top());
 		a.Pop();
 	}
-	int length = 0;
-	Stack<char> c(b);
-	while (!c.IsEmpty())
+	std::string result;
+	result += b.Top();
+	b.Pop();
+	while (!b.IsEmpty())
 	{
-		c.Pop();
-		length++;
-	}
-	char* tmp = new char[length + 1];
-	for (int i = length - 1; i > -1; i--)
-	{
-		tmp[i] = b.Top();
+		result.insert(0, 1, b.Top());
 		b.Pop();
 	}
-	tmp[length] = '\0';
-	std::string result;
-	result = tmp;
 	return result;
 }
 
-double PostfixForm::Compute(std::string s, Operand* values)
+double PostfixForm::Compute(std::string s, Operand* values, int varsCount)
 {
 	Stack<double> res(s.size());
-	int varsCount = VarsCount(s);
 	for (int i = 0; i < (int)s.size(); i++)
 	{
 		if (Type(s[i]) == Symbol::letter)
@@ -185,25 +176,7 @@ std::string PostfixForm::Normalize(std::string s)
 	return s;
 }
 
-int PostfixForm::VarsCount(std::string expr)
-{
-	int count = 0;
-	char* vars = new char[expr.size()];
-	bool in = false;
-	for (int i = 0; i < expr.size(); i++)
-	{
-		if (Type(expr[i]) == Symbol::letter)
-		{
-			for (int j = 0; j < count; j++)
-				if (expr[i] == vars[j]) in = true;
-			if (!in) vars[count++] = expr[i];
-		}
-	}
-	delete vars;
-	return count;
-}
-
-Operand* PostfixForm::Values(std::string expr)
+Operand* PostfixForm::Values(std::string expr, int& varCount)
 {
 	int count = 0;
 	char* vars = new char[expr.size()];
@@ -221,11 +194,16 @@ Operand* PostfixForm::Values(std::string expr)
 	Operand* values = new Operand[count];
 	for (int i = 0; i < count; i++)
 		values[i].name = vars[i];
+	std::cout << "Values" << std::endl;
+	for (int i = 0; i < count; i++)
+		std::cout << values[i].name << ' ';
+	std::cout << std::endl;
 	for (int i = 0; i < count; i++)
 	{
 		std::cout << "Input " << values[i].name << std::endl;
 		std::cin >> values[i].value;
 	}
 	delete vars;
+	varCount = count;
 	return values;
 }

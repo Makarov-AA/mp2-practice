@@ -1,4 +1,5 @@
 #pragma once
+//TO DO обработка параметров через возврат функции
 #include "Stack.h"
 #include <string>
 #include <stdlib.h>
@@ -26,14 +27,13 @@ private:
 	static Symbol Type(char c);
 	static bool Check(std::string);
 	static int PriorCheck(char);
-	static int VarsCount(std::string);
 	
 public:
 	static std::string Normalize(std::string);
 
 	static std::string Postfix(std::string);
 	
-	static double Compute(std::string, Operand*); // массив значений переменных
+	static double Compute(std::string, Operand*, int); // массив значений переменных
 
-	static Operand* Values(std::string);
+	static Operand* Values(std::string, int&);
 };

@@ -12,10 +12,10 @@ public:
 	Stack(const Stack&);
 	~Stack();
 	void Push(ValType);
-	void Pop();
+	void Pop();//убрал возвращение значения из изъятия верхнего
 	bool IsEmpty() const;
 	bool IsFull() const;
-	ValType Top() const;
+	ValType Top() const;//убрал метод возвращения текущего кол-ва элементов в стеке
 };
 
 template <class ValType>

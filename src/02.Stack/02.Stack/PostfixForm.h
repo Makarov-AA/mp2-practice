@@ -7,7 +7,6 @@
 enum class Symbol
 {
 	letter,
-	number,
 	operation,
 	open_bracket,
 	close_bracket,
@@ -17,7 +16,7 @@ enum class Symbol
 class Operand
 {
 public:
-	std::string name;
+	char name;
 	double value;
 };
 
@@ -27,10 +26,10 @@ private:
 	static Symbol Type(char c);
 	static bool Check(std::string);
 	static int PriorCheck(char);
-	static std::string Normalize(std::string);
-	int OperandsCount(std::string);
-	Operand* Values(std::string);
+	static int VarsCount(std::string);
+	static Operand* Values(std::string);
 public:
+	static std::string Normalize(std::string);
 
 	static std::string Postfix(std::string);
 	

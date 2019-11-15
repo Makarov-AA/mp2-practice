@@ -102,16 +102,10 @@ std::string PostfixForm::Postfix(std::string s)
 	return result;
 }
 
-double PostfixForm::Compute(std::string s)
+double PostfixForm::Compute(std::string s, Operand* values)
 {
 	Stack<double> res(s.size());
-	Operand* values = Values(s);
 	int varsCount = VarsCount(s);
-	for (int i = 0; i < varsCount; i++)
-	{
-		std::cout << "Input " << values[i].name << std::endl;
-		std::cin >> values[i].value;
-	}
 	for (int i = 0; i < (int)s.size(); i++)
 	{
 		if (Type(s[i]) == Symbol::letter)
@@ -227,6 +221,11 @@ Operand* PostfixForm::Values(std::string expr)
 	Operand* values = new Operand[count];
 	for (int i = 0; i < count; i++)
 		values[i].name = vars[i];
+	for (int i = 0; i < count; i++)
+	{
+		std::cout << "Input " << values[i].name << std::endl;
+		std::cin >> values[i].value;
+	}
 	delete vars;
 	return values;
 }

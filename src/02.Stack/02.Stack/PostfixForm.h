@@ -27,12 +27,13 @@ private:
 	static bool Check(std::string);
 	static int PriorCheck(char);
 	static int VarsCount(std::string);
-	static Operand* Values(std::string);
+	
 public:
 	static std::string Normalize(std::string);
 
 	static std::string Postfix(std::string);
 	
-	static double Compute(std::string); // массив значений переменных
-	
+	static double Compute(std::string, Operand*); // массив значений переменных
+
+	static Operand* Values(std::string);
 };

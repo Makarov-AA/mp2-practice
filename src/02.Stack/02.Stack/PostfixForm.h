@@ -27,14 +27,14 @@ private:
 	static Symbol Type(char c);
 	static bool Check(std::string);
 	static int PriorCheck(char);
-	static std::string Normalize(std::string);
-	static int OperandsCount(std::string);
 	static int Count(std::string expr);
-	static Operand* ConvertInValues(std::string);
+	static Operand* ConvertInValues(std::string* sepExpr, int count);
 	static std::string* Separate(std::string);
+	static bool AlreadyIn(Operand* vars, std::string var);
 public:
+	static std::string Normalize(std::string);
 
-	static std::string* Postfix(std::string);
+	static std::string Postfix(std::string);
 	
 	static double Compute(std::string); // массив значений переменных
 	

@@ -41,17 +41,20 @@ int PostfixForm::PriorCheck(char c)
 	throw "Not an operation or open bracket";
 }
 
-std::string* PostfixForm::Postfix(std::string s)
+std::string PostfixForm::Postfix(std::string s)
 {
-	std::string expr = Normalize(s);
-	if (Check(expr) == false) throw "Incorrect input";
-	int count = Count(expr);
-	std::string* sepExpr = Separate(expr);
+	std::string expr = Normalize(s); //убираем пробелы и расставл€ем * между числами и буквами
+	if (Check(expr) == false) throw "Incorrect input"; //проверка на некорректные символы
+	int count = Count(expr); //подсчет количества составных частей выражени€
+	std::string* sepExpr = Separate(expr); //разбиение выражени€ на составные части
 	Stack<std::string> a(count), b(count);
-	for (int i = 0; i < count; i++)
+	for (int i = 0; i < count; i++)//цикл преобразовани€ в постфиксную форму
 		switch (Type(sepExpr[i][0]))
 		{
 		case Symbol::letter:
+			b.Push(sepExpr[i]);
+			break;
+		case Symbol::number:
 			b.Push(sepExpr[i]);
 			break;
 		case Symbol::operation:
@@ -90,22 +93,46 @@ std::string* PostfixForm::Postfix(std::string s)
 		b.Push(a.Top());
 		a.Pop();
 	}
-	for (int i = count - 1; i > -1; i--)
-		[i] = b.Pop();
-	tmp[length] = '\0';
 	std::string result;
-	result = tmp;
+	while(!b.IsEmpty())
+	{
+		result += b.Top();
+		b.Pop();
+		result += ' ';
+	}
+	//–езультат - постфиксна€ форма с пробелами в качестве разделителей дл€ многосимвольных операндов
 	return result;
 }
 
 double PostfixForm::Compute(std::string expr)
 {
-	Stack<double> res(s.size());
-	double tmp;
-	for (int i = 0; i < (int)s.size(); i++)
+	int count = 0;
+	for (int i = 0; i < expr.size; i++)
 	{
-		if (Type(s[i]) == Symbol::letter)
+		if (expr[i] == ' ')
+			count++;
+	}
+	std::string* sepExpr = new std::string[count];
+	int j = 0;
+	for (int i = 0; i < count; i++)
+	{
+		while (j < expr.size && expr[j] != ' ')
 		{
+			sepExpr[i] += expr[j];
+				j++;
+		}
+		j++;
+	}
+	Stack<double> res(count);
+	Operand* vars = ConvertInValues(sepExpr, count);
+	for (int i = 1; i < vars[0].value + 1; i++)
+
+	double tmp;
+	for (int i = 0; i < count; i++)
+	{
+		if (Type(sepExpr[i][0]) < Symbol::operation)
+		{
+
 			std::cout << "Input " << s[i] << std::endl;
 			std::cin >> tmp;
 			res.Push(tmp);
@@ -176,55 +203,39 @@ std::string PostfixForm::Normalize(std::string expr)
 	return expr;
 }
 
-int PostfixForm::OperandsCount(std::string expr)
-{
-	int count = 0;
-	for (int i = 0; i < expr.size(); i++)
-	{
-		if (Type(expr[i]) < Symbol::operation)
-		{
-			count++;
-			while (Type(expr[i]) < Symbol::operation && i < expr.size)
-				i++;
-		}
-	}
-	return count;
-}
 
-int PostfixForm::Count(std::string expr)
+Operand* PostfixForm::ConvertInValues(std::string* sepExpr, int count)
 {
-	int count = 0;
-	for (int i = 0; i < expr.size(); i++)
+	int varCount = 0;
+	for (int i = 0; i < count; i++)
 	{
-		if (Type(expr[i]) < Symbol::operation)
-		{
-			count++;
-			while (Type(expr[i]) < Symbol::operation && i < expr.size)
-				i++;
-		}
-		else count++;
+		if (Type(sepExpr[i][0]) == Symbol::letter)
+			varCount++;
 	}
-	return count;
-}
-
-Operand* PostfixForm::ConvertInValues(std::string expr)
-{
-	int count = OperandsCount(expr);
-	Operand* values = new Operand[count];
-	int j = 0;
-	for (int i = 0; i < expr.size(); i++)
+	Operand* values = new Operand[varCount + 1];
+	values[0].name == "count";
+	values[0].value == 0;//в первом элементе храним количество переменных
+	int j = 1;
+	for (int i = 0; i < count; i++)
 	{
-		if (Type(expr[i]) < Symbol::operation)
+		if (Type(sepExpr[i][0]) == Symbol::letter)
 		{
-			while (Type(expr[i]) < Symbol::operation || i < expr.size)
+			if (!AlreadyIn(values, sepExpr[i]))
 			{
-				values[j].name += expr[i];
-				i++;
+				values[j].name = sepExpr[i];
+				values[0].value += 1;
+
 			}
-			j++;
 		}
 	}
 	return values;
+}
+
+bool PostfixForm::AlreadyIn(Operand* vars, std::string var)
+{
+	for (int i = 1; i < vars[0].value + 1; i++)
+		if (vars[i].name == var) return true;
+	return false;
 }
 
 std::string* PostfixForm::Separate(std::string expr)

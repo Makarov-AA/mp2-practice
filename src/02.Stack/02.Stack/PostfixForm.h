@@ -1,5 +1,4 @@
 #pragma once
-//TO DO обработка параметров через возврат функции
 #include "Stack.h"
 #include <string>
 #include <stdlib.h>
@@ -14,26 +13,33 @@ enum class Symbol
 	incorrect
 };
 
-class Operand
-{
-public:
-	char name;
-	double value;
-};
-
 class PostfixForm
 {
 private:
-	static Symbol Type(char c);
-	static bool Check(std::string);
-	static int PriorCheck(char);
-	
+	//определение типа символа
+	static Symbol Type(char c); 
+	//проверка введенного пользователем выражения на корректность
+	static bool Check(std::string); 
+	//определение приоритета операции (скобки)
+	static int PriorCheck(char); 
 public:
-	static std::string Normalize(std::string);
-
-	static std::string Postfix(std::string);
-	
-	static double Compute(std::string, Operand*, int); // массив значений переменных
-
-	static Operand* Values(std::string, int&);
+	class VarValues //имена переменных и их значения
+	{
+	public:
+		int varCount;
+		char* name;
+		double* value;
+		//создание массива значений по введенной пользователем строке (в принципе работает и для постфиксной)
+		VarValues(std::string);
+		~VarValues();
+		//ввод значений
+		void InputValues();
+	};
+	//убирает пробелы, расставляет * между подряд идущими буквами и скобками
+	static std::string Normalize(std::string expr);
+	//Преобразование в постфиксную форму
+	static std::string Postfix(std::string expr);
+	//Вычисление, values уже должен быть заполнен
+	static double Compute(std::string postfix, VarValues& values); 
+	//Функция создания и заполнения массива значений
 };

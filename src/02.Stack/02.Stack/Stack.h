@@ -1,5 +1,5 @@
 #pragma once
-//TO DO 
+
 template <class ValType>
 class Stack
 {
@@ -12,10 +12,10 @@ public:
 	Stack(const Stack&);
 	~Stack();
 	void Push(ValType);
-	void Pop();//убрал возвращение значения из изъятия верхнего
+	void Pop();
 	bool IsEmpty() const;
 	bool IsFull() const;
-	ValType Top() const;//убрал метод возвращения текущего кол-ва элементов в стеке
+	ValType Top() const;
 };
 
 template <class ValType>

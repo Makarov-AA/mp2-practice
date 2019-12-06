@@ -1,5 +1,6 @@
 #include "PostfixForm.h"
 
+//определение типа символа
 Symbol PostfixForm::Type(char c)
 {
 	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122)) return Symbol::letter;
@@ -9,16 +10,17 @@ Symbol PostfixForm::Type(char c)
 	return Symbol::incorrect;
 }
 
-bool PostfixForm::Check(std::string s)//проверка строки
-{	
+//проверка введенного пользователем выражения на корректность
+bool PostfixForm::Check(std::string s)
+{
 	if (s.size() == 1) return false;
 	if (Type(s[0]) != Symbol::letter && Type(s[0]) != Symbol::open_bracket) return false;//проверка первого символа выражения
 	if (Type(s[s.size() - 1]) != Symbol::letter && Type(s[s.size() - 1]) != Symbol::close_bracket) return false;//проверка последнего символа выражения
 	for (unsigned int i = 0; i < (s.size() - 1); i++)
 	{
-		if (Type(s[i]) == Symbol::incorrect) 
+		if (Type(s[i]) == Symbol::incorrect)
 			return false; //проверка на корректность символа
-		if (Type(s[i]) == Symbol::letter && Type(s[i + 1]) == Symbol::letter) 
+		if (Type(s[i]) == Symbol::letter && Type(s[i + 1]) == Symbol::letter)
 			return false;//проверка односимвольности операндов
 		if (Type(s[i]) == Symbol::operation && Type(s[i + 1]) == Symbol::operation)
 			return false;//проверка, что две операции не идут друг за другом
@@ -29,11 +31,12 @@ bool PostfixForm::Check(std::string s)//проверка строки
 		if (Type(s[i]) == Symbol::open_bracket) open++;
 		if (Type(s[i]) == Symbol::close_bracket) close++;
 	}
-	if (open != close) 
+	if (open != close)
 		return false;//проверка на одинаковое число закрывающихся и открывающихся скобок
 	return true;
 }
 
+//определение приоритета операции (скобки)
 int PostfixForm::PriorCheck(char c)
 {
 	if (c == '*' || c == '/') return 3;
@@ -42,6 +45,63 @@ int PostfixForm::PriorCheck(char c)
 	throw "Not an operation or open bracket";
 }
 
+PostfixForm::VarValues::VarValues(std::string expr)
+{
+	int count = 0;
+	char* vars = new char[expr.size()];
+	bool in;
+	for (int i = 0; i < expr.size(); i++)
+	{
+		in = false;
+		if (PostfixForm::Type(expr[i]) == Symbol::letter)
+		{
+			for (int j = 0; j < count; j++)
+				if (expr[i] == vars[j]) in = true;
+			if (!in) vars[count++] = expr[i];
+		}
+	}
+	varCount = count;
+	name = new char[varCount];
+	value = new double[varCount];
+	for (int i = 0; i < varCount; i++)
+		name[i] = vars[i];
+}
+
+PostfixForm::VarValues::~VarValues()
+{
+	delete[] name;
+	delete[] value;
+}
+
+void PostfixForm::VarValues::InputValues()
+{
+	for (int i = 0; i < varCount; i++)
+	{
+		std::cout << "Input " << name[i] << std::endl;
+		std::cin >> value[i];
+	}
+}
+
+//убирает пробелы, расставляет * между подряд идущими буквами и скобками
+std::string PostfixForm::Normalize(std::string s)
+{
+	for (unsigned int i = 0; i < s.size(); i++)
+		if (s[i] == ' ')  s.erase(i, 1);
+	for (unsigned int i = 0; i < s.size(); i++)
+	{
+		if ((i != 0) && (s[i] == '(') && (Type(s[i - 1]) == Symbol::letter))
+			s.insert(i, 1, '*');
+		if ((i != (s.size() - 1)) && (s[i] == ')') && (Type(s[i + 1]) == Symbol::letter))
+			s.insert(i + 1, 1, '*');
+		if ((i != (s.size() - 1)) && (s[i] == ')') && (s[i + 1] == '('))
+			s.insert(i + 1, 1, '*');
+		if ((i != (s.size() - 1)) && (Type(s[i]) == Symbol::letter) && (Type(s[i + 1]) == Symbol::letter))
+			s.insert(i + 1, 1, '*');
+	}
+	return s;
+}
+
+//Преобразование в постфиксную форму
 std::string PostfixForm::Postfix(std::string s)
 {
 	if (!(Check(s))) throw "Incorrect input";
@@ -83,45 +143,36 @@ std::string PostfixForm::Postfix(std::string s)
 		b.Push(a.Top());
 		a.Pop();
 	}
-	int length = 0;
-	Stack<char> c(b);
-	while (!c.IsEmpty())
+	std::string result;
+	while (!(b.IsEmpty()))
 	{
-		c.Pop();
-		length++;
-	}
-	char* tmp = new char[length + 1];
-	for (int i = length - 1; i > -1; i--)
-	{
-		tmp[i] = b.Top();
+		result += b.Top();
 		b.Pop();
 	}
-	tmp[length] = '\0';
-	std::string result;
-	result = tmp;
+	for (int i = 0; i < result.length() / 2; i++)
+		std::swap(result[i], result[result.length() - 1 - i]);
 	return result;
 }
 
-double PostfixForm::Compute(std::string s, Operand* values)
+double PostfixForm::Compute(std::string postfix, VarValues& values)
 {
-	Stack<double> res(s.size());
-	int varsCount = VarsCount(s);
-	for (int i = 0; i < (int)s.size(); i++)
+	Stack<double> res(values.varCount);
+	for (int i = 0; i < (int)postfix.size(); i++)
 	{
-		if (Type(s[i]) == Symbol::letter)
+		if (Type(postfix[i]) == Symbol::letter)
 		{
 			double tmp;
-			for (int j = 0; j < varsCount; j++)
+			for (int j = 0; j < values.varCount; j++)
 			{
-				if (s[i] == values[j].name)
-					tmp = values[j].value;
+				if (postfix[i] == values.name[j])
+					tmp = values.value[j];
 			}
 			res.Push(tmp);
 		}
-		if (Type(s[i]) == Symbol::operation)
+		if (Type(postfix[i]) == Symbol::operation)
 		{
 			double tmp;
-			switch (s[i])
+			switch (postfix[i])
 			{
 				case '+':
 				{
@@ -165,67 +216,4 @@ double PostfixForm::Compute(std::string s, Operand* values)
 		}
 	}
 	return res.Top();
-}
-
-std::string PostfixForm::Normalize(std::string s)
-{
-	for (unsigned int i = 0; i < s.size(); i++)
-		if (s[i] == ' ')  s.erase(i, 1);
-	for (unsigned int i = 0; i < s.size(); i++)
-	{
-		if ((i != 0) && (s[i] == '(') && (Type(s[i - 1]) == Symbol::letter))
-			s.insert(i, 1, '*');
-		if ((i != (s.size() - 1)) && (s[i] == ')') && (Type(s[i + 1]) == Symbol::letter))
-			s.insert(i + 1, 1, '*');
-		if ((i != (s.size() - 1)) && (s[i] == ')') && (s[i + 1] == '('))
-			s.insert(i + 1, 1, '*');
-		if ((i != (s.size() - 1)) && (Type(s[i]) == Symbol::letter) && (Type(s[i + 1]) == Symbol::letter))
-			s.insert(i + 1, 1, '*');
-	}
-	return s;
-}
-
-int PostfixForm::VarsCount(std::string expr)
-{
-	int count = 0;
-	char* vars = new char[expr.size()];
-	bool in = false;
-	for (int i = 0; i < expr.size(); i++)
-	{
-		if (Type(expr[i]) == Symbol::letter)
-		{
-			for (int j = 0; j < count; j++)
-				if (expr[i] == vars[j]) in = true;
-			if (!in) vars[count++] = expr[i];
-		}
-	}
-	delete vars;
-	return count;
-}
-
-Operand* PostfixForm::Values(std::string expr)
-{
-	int count = 0;
-	char* vars = new char[expr.size()];
-	bool in;
-	for (int i = 0; i < expr.size(); i++)
-	{
-		in = false;
-		if (Type(expr[i]) == Symbol::letter)
-		{
-			for (int j = 0; j < count; j++)
-				if (expr[i] == vars[j]) in = true;
-			if (!in) vars[count++] = expr[i];
-		}
-	}
-	Operand* values = new Operand[count];
-	for (int i = 0; i < count; i++)
-		values[i].name = vars[i];
-	for (int i = 0; i < count; i++)
-	{
-		std::cout << "Input " << values[i].name << std::endl;
-		std::cin >> values[i].value;
-	}
-	delete vars;
-	return values;
 }

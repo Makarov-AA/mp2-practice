@@ -23,7 +23,7 @@ public:
 	template <typename T> friend std::ostream& operator << (std::ostream&, const TMatrix<T>&);
 	template <typename T> friend std::istream& operator >> (std::istream&, TMatrix<T>&);
 	TVector<ValType> operator * (const TVector<ValType>&) const;
-	ValType determinant();
+	ValType determinant() const;
 };
 
 //реализация методов матрицы
@@ -68,8 +68,7 @@ bool TMatrix<ValType>::operator != (const TMatrix<ValType>& m) const
 template <class ValType>
 const TMatrix<ValType>& TMatrix<ValType>::operator = (const TMatrix<ValType>& m)
 {
-	//!!!
-	if (this == &m) return *this;
+	if (*this == m) return *this;
 	if (size != m.size)
 	{
 		delete[] elm;
@@ -114,6 +113,9 @@ TMatrix<ValType> TMatrix<ValType>::operator + (const TMatrix<ValType> & m) const
 {
 	if (size != m.size) throw "Sizes do not match";
 	TMatrix sum(size);
+	for (int i = 0; i < size; i++)
+		for (int j = i; j < size; j++)
+			sum[i][j] = 0;
 	for (int i = 0; i < size; i++)
 		sum[i] = elm[i] + m[i];
 	return sum;
@@ -175,7 +177,7 @@ TVector<ValType> TMatrix<ValType>::operator * (const TVector<ValType>& v) const
 }
 
 template <class ValType>
-ValType TMatrix<ValType>::determinant()
+ValType TMatrix<ValType>::determinant() const
 {
 	ValType det = 1;
 	for (int i = 0; i < size; i++)

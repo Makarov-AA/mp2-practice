@@ -64,7 +64,7 @@ bool TVector<ValType>::operator == (const TVector<ValType>& v) const
 	if (size != v.size || start_idx != v.start_idx)
 		return false;
 	for (int i = 0; i < size; i++)
-		if (elm[i] != v[i])
+		if (elm[i] != v.elm[i])
 			return false;
 	return true;
 }
@@ -178,7 +178,7 @@ ValType& TVector<ValType>::operator [] (int idx) const
 template <class ValType>
 const TVector<ValType>& TVector<ValType>::operator = (const TVector<ValType>& v)
 {	
-	if (this == &v) return *this;
+	if (*this == v) return *this;
 	if (size != v.size)
 	{
 		delete[] elm;

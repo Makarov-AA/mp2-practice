@@ -13,26 +13,33 @@ enum class Symbol
 	incorrect
 };
 
-class Operand
-{
-public:
-	char name;
-	double value;
-};
-
 class PostfixForm
 {
 private:
+	//определение типа символа
 	static Symbol Type(char c);
+	//проверка введенного пользователем выражени€ на корректность
 	static bool Check(std::string);
+	//определение приоритета операции (скобки)
 	static int PriorCheck(char);
-	static int VarsCount(std::string);
-	static Operand* Values(std::string);
 public:
-	static std::string Normalize(std::string);
-
-	static std::string Postfix(std::string);
-
-	static double Compute(std::string); // массив значений переменных
-
+	class VarValues //имена переменных и их значени€
+	{
+	public:
+		int varCount;
+		char* name;
+		double* value;
+		//создание массива значений по введенной пользователем строке (в принципе работает и дл€ постфиксной)
+		VarValues(std::string);
+		~VarValues();
+		//ввод значений
+		void InputValues();
+	};
+	//убирает пробелы, расставл€ет * между подр€д идущими буквами и скобками
+	static std::string Normalize(std::string expr);
+	//ѕреобразование в постфиксную форму
+	static std::string Postfix(std::string expr);
+	//¬ычисление, values уже должен быть заполнен
+	static double Compute(std::string postfix, VarValues& values);
+	//‘ункци€ создани€ и заполнени€ массива значений
 };

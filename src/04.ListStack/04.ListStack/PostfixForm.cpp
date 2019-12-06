@@ -105,7 +105,7 @@ std::string PostfixForm::Normalize(std::string s)
 std::string PostfixForm::Postfix(std::string s)
 {
 	if (!(Check(s))) throw "Incorrect input";
-	Stack<char> a(s.size()), b(s.size());
+	TStackArray<char> a(s.size()), b(s.size());
 	for (int i = 0; i < s.size(); i++)
 		switch (Type(s[i]))
 		{
@@ -156,7 +156,7 @@ std::string PostfixForm::Postfix(std::string s)
 
 double PostfixForm::Compute(std::string postfix, VarValues& values)
 {
-	Stack<double> res(values.varCount);
+	TStackArray<double> res(values.varCount);
 	for (int i = 0; i < (int)postfix.size(); i++)
 	{
 		if (Type(postfix[i]) == Symbol::letter)

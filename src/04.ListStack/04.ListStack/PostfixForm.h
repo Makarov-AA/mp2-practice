@@ -1,5 +1,5 @@
 #pragma once
-#include "Stack.h"
+#include "TStackArray.h"
 #include <string>
 #include <stdlib.h>
 #include <iostream>
@@ -16,12 +16,14 @@ enum class Symbol
 class PostfixForm
 {
 private:
+	//переменна€ дл€ типа стека 1 дл€ указателей, 2 дл€ списка
+	int type;
 	//определение типа символа
-	static Symbol Type(char c);
+	Symbol Type(char c);
 	//проверка введенного пользователем выражени€ на корректность
-	static bool Check(std::string);
+	bool Check(std::string);
 	//определение приоритета операции (скобки)
-	static int PriorCheck(char);
+	int PriorCheck(char);
 public:
 	class VarValues //имена переменных и их значени€
 	{
@@ -35,11 +37,12 @@ public:
 		//ввод значений
 		void InputValues();
 	};
+	PostfixForm(int i) : type(i) { };
 	//убирает пробелы, расставл€ет * между подр€д идущими буквами и скобками
-	static std::string Normalize(std::string expr);
+	std::string Normalize(std::string expr);
 	//ѕреобразование в постфиксную форму
-	static std::string Postfix(std::string expr);
+	std::string Postfix(std::string expr);
 	//¬ычисление, values уже должен быть заполнен
-	static double Compute(std::string postfix, VarValues& values);
+	double Compute(std::string postfix, VarValues& values);
 	//‘ункци€ создани€ и заполнени€ массива значений
 };

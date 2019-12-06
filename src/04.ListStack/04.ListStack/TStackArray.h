@@ -1,16 +1,18 @@
 #pragma once
 
+#include "TStack.h"
+
 template <class ValType>
-class Stack
+class TStackArray : public TStack
 {
 private:
 	int size;
 	ValType* elm;
 	int top;
 public:
-	Stack(int max);
-	Stack(const Stack&);
-	~Stack();
+	TStackArray(int max);
+	TStackArray(const TStackArray&);
+	~TStackArray();
 	void Push(ValType);
 	void Pop();
 	bool IsEmpty() const;
@@ -19,13 +21,13 @@ public:
 };
 
 template <class ValType>
-Stack<ValType>::Stack(int max) : size(max), top(0)
+TStackArray<ValType>::TStackArray(int max) : size(max), top(0)
 {
 	elm = new ValType[size];
 }
 
 template <class ValType>
-Stack<ValType>::Stack(const Stack& c) : size(c.size), top(c.top)
+TStackArray<ValType>::TStackArray(const TStackArray& c) : size(c.size), top(c.top)
 {
 	elm = new ValType[size];
 	for (int i = 0; i < top; i++)
@@ -33,46 +35,46 @@ Stack<ValType>::Stack(const Stack& c) : size(c.size), top(c.top)
 }
 
 template <class ValType>
-Stack<ValType>::~Stack()
+TStackArray<ValType>::~TStackArray()
 {
 	delete[] elm;
 }
 
 template <class ValType>
-void Stack<ValType>::Push(ValType e)
+void TStackArray<ValType>::Push(ValType e)
 {
 	if (IsFull())
-		throw "Stack overflow";
+		throw "TStackArray overflow";
 	elm[top++] = e;
 }
 
 template <class ValType>
-void Stack<ValType>::Pop()
+void TStackArray<ValType>::Pop()
 {
 	if (IsEmpty())
-		throw "Empty Stack";
+		throw "Empty TStackArray";
 	top--;
 	return;
 }
 
 template <class ValType>
-bool Stack<ValType>::IsEmpty() const
+bool TStackArray<ValType>::IsEmpty() const
 {
 	if (top == 0) return true;
 	return false;
 }
 
 template <class ValType>
-bool Stack<ValType>::IsFull() const
+bool TStackArray<ValType>::IsFull() const
 {
 	if (top == size) return true;
 	return false;
 }
 
 template <class ValType>
-ValType Stack<ValType>::Top() const
+ValType TStackArray<ValType>::Top() const
 {
 	if (IsEmpty())
-		throw "Empty Stack";
+		throw "Empty TStackArray";
 	return elm[top - 1];
 }

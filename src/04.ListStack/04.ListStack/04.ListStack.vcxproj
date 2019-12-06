@@ -117,8 +117,9 @@
   <ItemGroup>
     <ClInclude Include="List.h" />
     <ClInclude Include="PostfixForm.h" />
-    <ClInclude Include="Stack.h" />
+    <ClInclude Include="TStackArray.h" />
     <ClInclude Include="TNode.h" />
+    <ClInclude Include="TStack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PostfixForm.cpp" />

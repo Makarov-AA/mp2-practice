@@ -45,19 +45,19 @@ int PostfixForm::PriorCheck(char c)
 	throw "Not an operation or open bracket";
 }
 
-PostfixForm::VarValues::VarValues(std::string expr)
+VarValues::VarValues(PostfixForm& post)
 {
 	int count = 0;
-	char* vars = new char[expr.size()];
+	char* vars = new char[post.expr.size()];
 	bool in;
-	for (int i = 0; i < expr.size(); i++)
+	for (int i = 0; i < post.expr.size(); i++)
 	{
 		in = false;
-		if (PostfixForm::Type(expr[i]) == Symbol::letter)
+		if (post.Type(post.expr[i]) == Symbol::letter)
 		{
 			for (int j = 0; j < count; j++)
-				if (expr[i] == vars[j]) in = true;
-			if (!in) vars[count++] = expr[i];
+				if (post.expr[i] == vars[j]) in = true;
+			if (!in) vars[count++] = post.expr[i];
 		}
 	}
 	varCount = count;
@@ -67,13 +67,13 @@ PostfixForm::VarValues::VarValues(std::string expr)
 		name[i] = vars[i];
 }
 
-PostfixForm::VarValues::~VarValues()
+VarValues::~VarValues()
 {
 	delete[] name;
 	delete[] value;
 }
 
-void PostfixForm::VarValues::InputValues()
+void VarValues::InputValues()
 {
 	for (int i = 0; i < varCount; i++)
 	{
@@ -82,81 +82,98 @@ void PostfixForm::VarValues::InputValues()
 	}
 }
 
+PostfixForm::PostfixForm(std::string& inputExpr, int inputType) : expr(inputExpr), type(inputType) { }
+
 //убирает пробелы, расставл€ет * между подр€д идущими буквами и скобками
-std::string PostfixForm::Normalize(std::string s)
+std::string PostfixForm::Normalize()
 {
-	for (unsigned int i = 0; i < s.size(); i++)
-		if (s[i] == ' ')  s.erase(i, 1);
-	for (unsigned int i = 0; i < s.size(); i++)
+	for (unsigned int i = 0; i < expr.size(); i++)
+		if (expr[i] == ' ')  expr.erase(i, 1);
+	for (unsigned int i = 0; i < expr.size(); i++)
 	{
-		if ((i != 0) && (s[i] == '(') && (Type(s[i - 1]) == Symbol::letter))
-			s.insert(i, 1, '*');
-		if ((i != (s.size() - 1)) && (s[i] == ')') && (Type(s[i + 1]) == Symbol::letter))
-			s.insert(i + 1, 1, '*');
-		if ((i != (s.size() - 1)) && (s[i] == ')') && (s[i + 1] == '('))
-			s.insert(i + 1, 1, '*');
-		if ((i != (s.size() - 1)) && (Type(s[i]) == Symbol::letter) && (Type(s[i + 1]) == Symbol::letter))
-			s.insert(i + 1, 1, '*');
+		if ((i != 0) && (expr[i] == '(') && (Type(expr[i - 1]) == Symbol::letter))
+			expr.insert(i, 1, '*');
+		if ((i != (expr.size() - 1)) && (expr[i] == ')') && (Type(expr[i + 1]) == Symbol::letter))
+			expr.insert(i + 1, 1, '*');
+		if ((i != (expr.size() - 1)) && (expr[i] == ')') && (expr[i + 1] == '('))
+			expr.insert(i + 1, 1, '*');
+		if ((i != (expr.size() - 1)) && (Type(expr[i]) == Symbol::letter) && (Type(expr[i + 1]) == Symbol::letter))
+			expr.insert(i + 1, 1, '*');
 	}
-	return s;
+	return expr;
 }
 
 //ѕреобразование в постфиксную форму
-std::string PostfixForm::Postfix(std::string s)
+std::string PostfixForm::Postfix()
 {
-	if (!(Check(s))) throw "Incorrect input";
-	TStackArray<char> a(s.size()), b(s.size());
-	for (int i = 0; i < s.size(); i++)
-		switch (Type(s[i]))
+	if (!(Check(expr))) throw "Incorrect input";
+	TStack<char>* a;
+	TStack<char>* b;
+	if (type == 1)
+	{
+		a = new TStackArray<char>(expr.size());
+		b = new TStackArray<char>(expr.size());
+	}
+	else
+	{
+		a = new TStackList<char>;
+		b = new TStackList<char>;
+	}
+	for (int i = 0; i < expr.size(); i++)
+		switch (Type(expr[i]))
 		{
 		case Symbol::letter:
-			b.Push(s[i]);
+			b->Push(expr[i]);
 			break;
 		case Symbol::operation:
-			if (a.IsEmpty())
+			if (a->IsEmpty())
 			{
-				a.Push(s[i]);
+				a->Push(expr[i]);
 				break;
 			}
-			if (PriorCheck(s[i]) < PriorCheck(a.Top()))
-				while (!a.IsEmpty() && PriorCheck(s[i]) <= PriorCheck(a.Top()))
+			if (PriorCheck(expr[i]) < PriorCheck(a->Top()))
+				while (!a->IsEmpty() && PriorCheck(expr[i]) <= PriorCheck(a->Top()))
 				{
-					b.Push(a.Top());
-					a.Pop();
+					b->Push(a->Top());
+					a->Pop();
 				}
-			a.Push(s[i]);
+			a->Push(expr[i]);
 			break;
 		case Symbol::open_bracket:
-			a.Push(s[i]);
+			a->Push(expr[i]);
 			break;
 		case Symbol::close_bracket:
-			while (Type(a.Top()) != Symbol::open_bracket)
+			while (Type(a->Top()) != Symbol::open_bracket)
 			{
-				b.Push(a.Top());
-				a.Pop();
+				b->Push(a->Top());
+				a->Pop();
 			}
-			a.Pop();
+			a->Pop();
 			break;
 		}
-	while (!(a.IsEmpty()))
+	while (!(a->IsEmpty()))
 	{
-		b.Push(a.Top());
-		a.Pop();
+		b->Push(a->Top());
+		a->Pop();
 	}
-	std::string result;
-	while (!(b.IsEmpty()))
+	postfix = "";
+	while (!(b->IsEmpty()))
 	{
-		result += b.Top();
-		b.Pop();
+		postfix += b->Top();
+		b->Pop();
 	}
-	for (int i = 0; i < result.length() / 2; i++)
-		std::swap(result[i], result[result.length() - 1 - i]);
-	return result;
+	for (int i = 0; i < postfix.length() / 2; i++)
+		std::swap(postfix[i], postfix[postfix.length() - 1 - i]);
+	return postfix;
 }
 
-double PostfixForm::Compute(std::string postfix, VarValues& values)
+double PostfixForm::Compute(VarValues& values)
 {
-	TStackArray<double> res(values.varCount);
+	TStack<double>* res;
+	if (type == 1)
+		res = new TStackArray<double>(values.varCount);
+	else
+		res = new TStackList<double>;
 	for (int i = 0; i < (int)postfix.size(); i++)
 	{
 		if (Type(postfix[i]) == Symbol::letter)
@@ -167,7 +184,7 @@ double PostfixForm::Compute(std::string postfix, VarValues& values)
 				if (postfix[i] == values.name[j])
 					tmp = values.value[j];
 			}
-			res.Push(tmp);
+			res->Push(tmp);
 		}
 		if (Type(postfix[i]) == Symbol::operation)
 		{
@@ -176,44 +193,44 @@ double PostfixForm::Compute(std::string postfix, VarValues& values)
 			{
 			case '+':
 			{
-				double v1 = res.Top();
-				res.Pop();
-				double v2 = res.Top();
-				res.Pop();
+				double v1 = res->Top();
+				res->Pop();
+				double v2 = res->Top();
+				res->Pop();
 				tmp = v2 + v1;
 				break;
 			}
 			case '-':
 			{
-				double v1 = res.Top();
-				res.Pop();
-				double v2 = res.Top();
-				res.Pop();
+				double v1 = res->Top();
+				res->Pop();
+				double v2 = res->Top();
+				res->Pop();
 				tmp = v2 - v1;
 				break;
 			}
 			case '*':
 			{
-				double v1 = res.Top();
-				res.Pop();
-				double v2 = res.Top();
-				res.Pop();
+				double v1 = res->Top();
+				res->Pop();
+				double v2 = res->Top();
+				res->Pop();
 				tmp = v2 * v1;
 				break;
 			}
 			case '/':
 			{
-				double v1 = res.Top();
-				res.Pop();
-				double v2 = res.Top();
-				res.Pop();
+				double v1 = res->Top();
+				res->Pop();
+				double v2 = res->Top();
+				res->Pop();
 				if (v1 == 0) throw "Zero division";
 				tmp = v2 / v1;
 				break;
 			}
 			}
-			res.Push(tmp);
+			res->Push(tmp);
 		}
 	}
-	return res.Top();
+	return res->Top();
 }

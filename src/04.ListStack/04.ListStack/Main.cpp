@@ -10,52 +10,62 @@ int main()
 	std::string s;
 	while (mode1 == 1 || mode1 == 2 || mode1 == 3)
 	{
-		std::cout << "Input mode: 1 - manual input, 2 - auto input 3 - list test" << std::endl;
+		std::cout << "Input mode: 1 - array postfix form, 2 - list postfix form, 3 - list test" << std::endl;
 		std::cout << "Input any other value to close the program" << std::endl;
 		std::cin >> mode1;
 		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		switch (mode1)
+		if ((mode1 == 1) || (mode1 == 2))
 		{
-		case 1:
-		{
+			std::cout << "Input mode: 1 - manual input, 2 - auto input" << std::endl;
+			int mode2;
+			std::cin >> mode2;
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			switch (mode2)
+			{
+			case 1:
+			{
 
-			try
-			{
-				std::cout << "Input expression" << std::endl;
-				std::getline(std::cin, s);
-				std::string norm = PostfixForm::Normalize(s);
-				std::cout << "Normilized form: " << norm << std::endl;
-				std::string post = PostfixForm::Postfix(norm);
-				std::cout << "Postfix form: " << post << std::endl;
-				PostfixForm::VarValues values(s);
-				values.InputValues();
-				std::cout << "Result " << PostfixForm::Compute(post, values) << std::endl;
-				break;
+				try
+				{
+					std::cout << "Input expression" << std::endl;
+					std::getline(std::cin, s);
+					PostfixForm post(s, mode1);
+					std::cout << "Normilized form: " << post.Normalize() << std::endl;
+					std::string postfixForm = post.Postfix();
+					std::cout << "Postfix form: " << postfixForm << std::endl;
+					VarValues values(post);
+					values.InputValues();
+					std::cout << "Result " << post.Compute(values) << std::endl;
+					break;
+				}
+				catch (const char* c)
+				{
+					std::cout << c << std::endl;
+				}
 			}
-			catch (const char* c)
+			case 2:
 			{
-				std::cout << c << std::endl;
+				try
+				{
+					std::cout << "A+B*C-D/E" << std::endl;
+					s = "A+B*C-D/E";
+					PostfixForm post(s, mode1);
+					std::cout << "Normilized form: " << post.Normalize() << std::endl;
+					std::string postfixForm = post.Postfix();
+					std::cout << "Postfix form: " << postfixForm << std::endl;
+					VarValues values(post);
+					values.InputValues();
+					std::cout << "Result " << post.Compute(values) << std::endl;
+					break;
+				}
+				catch (const char* c)
+				{
+					std::cout << c << std::endl;
+				}
+			}
 			}
 		}
-		case 2:
-		{
-			try
-			{
-				std::cout << "A+B*C-D/E" << std::endl;
-				s = "A+B*C-D/E";
-				std::string post = PostfixForm::Postfix(s);
-				std::cout << "Postfix form: " << post << std::endl;
-				PostfixForm::VarValues values(s);
-				values.InputValues();
-				std::cout << "Result " << PostfixForm::Compute(post, values) << std::endl;
-				break;
-			}
-			catch (const char* c)
-			{
-				std::cout << c << std::endl;
-			}
-		}
-		case 3:
+		if (mode1 == 3)
 		{
 			TNode<int, int>* node = new TNode<int, int>;
 			node->data = new int;
@@ -155,7 +165,6 @@ int main()
 			}
 			std::cout << list.Current();
 			std::cout << std::endl;
-		}
 		}
 	}
 	return 0;

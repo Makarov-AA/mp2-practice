@@ -3,7 +3,7 @@
 #include "TStack.h"
 
 template <class ValType>
-class TStackArray : public TStack
+class TStackArray : public TStack<ValType>
 {
 private:
 	int size;

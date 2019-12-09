@@ -26,6 +26,7 @@ public:
 	void Reset();
 	void MoveNext();
 	bool IsEnded() const;
+	bool IsEmpty() const;
 	TNode<TKey, TData>* Prev();
 	TNode<TKey, TData>* Current();
 	TNode<TKey, TData>* Next();
@@ -259,6 +260,13 @@ template <class TKey, class TData>
 bool TList<TKey, TData>::IsEnded() const
 {
 	if (pNext == nullptr) return true;
+	return false;
+}
+
+template <class TKey, class TData>
+bool TList<TKey, TData>::IsEmpty() const
+{
+	if (pFirst == nullptr) return true;
 	return false;
 }
 

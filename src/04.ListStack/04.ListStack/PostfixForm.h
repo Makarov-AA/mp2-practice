@@ -1,5 +1,6 @@
 #pragma once
 #include "TStackArray.h"
+#include "TStackList.h"
 #include <string>
 #include <stdlib.h>
 #include <iostream>
@@ -13,11 +14,30 @@ enum class Symbol
 	incorrect
 };
 
+class PostfixForm;
+
+class VarValues //имена переменных и их значени€
+{
+public:
+	int varCount;
+	char* name;
+	double* value;
+	//создание массива значений по введенной пользователем строке (в принципе работает и дл€ постфиксной)
+	VarValues(PostfixForm&);
+	~VarValues();
+	//ввод значений
+	void InputValues();
+};
+
 class PostfixForm
 {
 private:
 	//переменна€ дл€ типа стека 1 дл€ указателей, 2 дл€ списка
 	int type;
+	//пользовательское выражение
+	std::string expr;
+	//постфиксна€ форма
+	std::string postfix;
 	//определение типа символа
 	Symbol Type(char c);
 	//проверка введенного пользователем выражени€ на корректность
@@ -25,24 +45,14 @@ private:
 	//определение приоритета операции (скобки)
 	int PriorCheck(char);
 public:
-	class VarValues //имена переменных и их значени€
-	{
-	public:
-		int varCount;
-		char* name;
-		double* value;
-		//создание массива значений по введенной пользователем строке (в принципе работает и дл€ постфиксной)
-		VarValues(std::string);
-		~VarValues();
-		//ввод значений
-		void InputValues();
-	};
-	PostfixForm(int i) : type(i) { };
+	//конструктор, определ€ющий тип стека
+	PostfixForm(std::string&, int);
 	//убирает пробелы, расставл€ет * между подр€д идущими буквами и скобками
-	std::string Normalize(std::string expr);
+	std::string Normalize();
 	//ѕреобразование в постфиксную форму
-	std::string Postfix(std::string expr);
+	std::string Postfix();
 	//¬ычисление, values уже должен быть заполнен
-	double Compute(std::string postfix, VarValues& values);
-	//‘ункци€ создани€ и заполнени€ массива значений
+	double Compute(VarValues& values);
+	// онструктор дл€ создани€ массива значений переменных
+	friend VarValues::VarValues(PostfixForm&);
 };

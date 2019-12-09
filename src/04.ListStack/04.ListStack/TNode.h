@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 template <class TKey, class TData>
 struct TNode
 {
@@ -13,7 +15,7 @@ struct TNode
 	~TNode();
 
 	template <typename TKey, typename TData>
-	friend std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>& _tnode);
+	friend std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>* node);
 };
 
 template <class TKey, class TData>

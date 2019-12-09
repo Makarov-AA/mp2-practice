@@ -120,6 +120,7 @@
     <ClInclude Include="TStackArray.h" />
     <ClInclude Include="TNode.h" />
     <ClInclude Include="TStack.h" />
+    <ClInclude Include="TStackList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PostfixForm.cpp" />

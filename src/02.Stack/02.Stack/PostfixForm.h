@@ -13,6 +13,19 @@ enum class Symbol
 	incorrect
 };
 
+class VarValues //имена переменных и их значени€
+{
+public:
+	int varCount;
+	char* name;
+	double* value;
+	//создание массива значений по введенной пользователем строке (в принципе работает и дл€ постфиксной)
+	VarValues(std::string);
+	~VarValues();
+	//ввод значений
+	void InputValues();
+};
+
 class PostfixForm
 {
 private:
@@ -23,18 +36,6 @@ private:
 	//определение приоритета операции (скобки)
 	static int PriorCheck(char); 
 public:
-	class VarValues //имена переменных и их значени€
-	{
-	public:
-		int varCount;
-		char* name;
-		double* value;
-		//создание массива значений по введенной пользователем строке (в принципе работает и дл€ постфиксной)
-		VarValues(std::string);
-		~VarValues();
-		//ввод значений
-		void InputValues();
-	};
 	//убирает пробелы, расставл€ет * между подр€д идущими буквами и скобками
 	static std::string Normalize(std::string expr);
 	//ѕреобразование в постфиксную форму
@@ -42,4 +43,5 @@ public:
 	//¬ычисление, values уже должен быть заполнен
 	static double Compute(std::string postfix, VarValues& values); 
 	//‘ункци€ создани€ и заполнени€ массива значений
+	friend VarValues::VarValues(std::string);
 };

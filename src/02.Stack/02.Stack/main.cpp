@@ -25,7 +25,7 @@ int main()
 				std::cout << "Normilized form: " << norm << std::endl;
 				std::string post = PostfixForm::Postfix(norm);
 				std::cout << "Postfix form: " << post << std::endl;
-				PostfixForm::VarValues values(s);
+				VarValues values(s);
 				values.InputValues();
 				std::cout << "Result " << PostfixForm::Compute(post, values) << std::endl;
 				break;
@@ -36,7 +36,7 @@ int main()
 				s = "A+B*C-D/E";
 				std::string post = PostfixForm::Postfix(s);
 				std::cout << "Postfix form: " << post << std::endl;
-				PostfixForm::VarValues values(s);
+				VarValues values(s);
 				values.InputValues();
 				std::cout << "Result " << PostfixForm::Compute(post, values) << std::endl;
 				break;

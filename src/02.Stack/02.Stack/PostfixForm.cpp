@@ -45,7 +45,7 @@ int PostfixForm::PriorCheck(char c)
 	throw "Not an operation or open bracket";
 }
 
-PostfixForm::VarValues::VarValues(std::string expr)
+VarValues::VarValues(std::string expr)
 {
 	int count = 0;
 	char* vars = new char[expr.size()];
@@ -67,13 +67,13 @@ PostfixForm::VarValues::VarValues(std::string expr)
 		name[i] = vars[i];
 }
 
-PostfixForm::VarValues::~VarValues()
+VarValues::~VarValues()
 {
 	delete[] name;
 	delete[] value;
 }
 
-void PostfixForm::VarValues::InputValues()
+void VarValues::InputValues()
 {
 	for (int i = 0; i < varCount; i++)
 	{

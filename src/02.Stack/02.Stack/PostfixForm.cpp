@@ -118,8 +118,8 @@ std::string PostfixForm::Postfix(std::string s)
 				a.Push(s[i]);
 				break;
 			}
-			if (PriorCheck(s[i]) < PriorCheck(a.Top()))
-				while (!a.IsEmpty() && PriorCheck(s[i]) <= PriorCheck(a.Top()))
+			if (PriorCheck(a.Top()) >= PriorCheck(s[i]))
+				while (!a.IsEmpty() && PriorCheck(a.Top()) >= PriorCheck(s[i]))
 				{
 					b.Push(a.Top());
 					a.Pop();
@@ -156,7 +156,7 @@ std::string PostfixForm::Postfix(std::string s)
 
 double PostfixForm::Compute(std::string postfix, VarValues& values)
 {
-	Stack<double> res(values.varCount);
+	Stack<double> res(postfix.size());
 	for (int i = 0; i < (int)postfix.size(); i++)
 	{
 		if (Type(postfix[i]) == Symbol::letter)
@@ -165,11 +165,14 @@ double PostfixForm::Compute(std::string postfix, VarValues& values)
 			for (int j = 0; j < values.varCount; j++)
 			{
 				if (postfix[i] == values.name[j])
+				{
 					tmp = values.value[j];
+					break;
+				}
 			}
 			res.Push(tmp);
 		}
-		if (Type(postfix[i]) == Symbol::operation)
+		else if (Type(postfix[i]) == Symbol::operation)
 		{
 			double tmp;
 			switch (postfix[i])

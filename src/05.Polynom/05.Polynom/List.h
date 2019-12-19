@@ -12,24 +12,31 @@ private:
 	TNode<TKey, TData>* pNext;
 	TNode<TKey, TData>* pCurrent;
 public:
+
 	TList();
 	TList(TList&);
 	TList(TNode<TKey, TData>*);
 	~TList();
+
 	TNode<TKey, TData>* Search(TKey);
-	void InsertStart(TKey, TData*);
-	void InsertEnd(TKey, TData*);
-	void InsertBefore(TKey search_key, TKey, TData*);
-	void InsertAfter(TKey search_key, TKey, TData*);
+
+	void InsertStart(TKey, TData&);
+	void InsertEnd(TKey, TData&);
+	void InsertBefore(TKey search_key, TKey, TData&);
+	void InsertAfter(TKey search_key, TKey, TData&);
+
 	void Remove(TKey);
+
 	void Print();
+
 	void Reset();
 	void MoveNext();
 	bool IsEnded() const;
-	bool IsEmpty() const;
 	TNode<TKey, TData>* Prev();
 	TNode<TKey, TData>* Current();
 	TNode<TKey, TData>* Next();
+
+	bool IsEmpty() const;
 };
 
 template <class TKey, class TData>

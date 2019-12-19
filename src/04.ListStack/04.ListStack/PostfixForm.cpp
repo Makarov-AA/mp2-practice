@@ -82,7 +82,7 @@ void VarValues::InputValues()
 	}
 }
 
-PostfixForm::PostfixForm(std::string& inputExpr, int inputType) : expr(inputExpr), type(inputType) { }
+PostfixForm::PostfixForm(std::string& inputExpr, int inputType) : expr(inputExpr), type(inputType), postfix("") { }
 
 //убирает пробелы, расставл€ет * между подр€д идущими буквами и скобками
 std::string PostfixForm::Normalize()
@@ -106,6 +106,7 @@ std::string PostfixForm::Normalize()
 //ѕреобразование в постфиксную форму
 std::string PostfixForm::Postfix()
 {
+	if (postfix != "") return postfix;
 	if (!(Check(expr))) throw "Incorrect input";
 	TStack<char>* a;
 	TStack<char>* b;
@@ -131,8 +132,8 @@ std::string PostfixForm::Postfix()
 				a->Push(expr[i]);
 				break;
 			}
-			if (PriorCheck(expr[i]) < PriorCheck(a->Top()))
-				while (!a->IsEmpty() && PriorCheck(expr[i]) <= PriorCheck(a->Top()))
+			if (PriorCheck(a->Top()) >= PriorCheck(expr[i]))
+				while (!a->IsEmpty() && PriorCheck(a->Top()) >= PriorCheck(expr[i]))
 				{
 					b->Push(a->Top());
 					a->Pop();
@@ -171,7 +172,7 @@ double PostfixForm::Compute(VarValues& values)
 {
 	TStack<double>* res;
 	if (type == 1)
-		res = new TStackArray<double>(values.varCount);
+		res = new TStackArray<double>(postfix.size());
 	else
 		res = new TStackList<double>;
 	for (int i = 0; i < (int)postfix.size(); i++)
@@ -186,7 +187,7 @@ double PostfixForm::Compute(VarValues& values)
 			}
 			res->Push(tmp);
 		}
-		if (Type(postfix[i]) == Symbol::operation)
+		else if (Type(postfix[i]) == Symbol::operation)
 		{
 			double tmp;
 			switch (postfix[i])

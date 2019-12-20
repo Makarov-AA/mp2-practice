@@ -13,7 +13,7 @@ private:
 	TNode<TKey, TData>* pCurrent;
 public:
 	TList();
-	TList(TList&);
+	TList(const TList&);
 	TList(TNode<TKey, TData>*);
 	~TList();
 	TNode<TKey, TData>* Search(TKey);
@@ -22,7 +22,7 @@ public:
 	void InsertBefore(TKey search_key, TKey, TData*);
 	void InsertAfter(TKey search_key, TKey, TData*);
 	void Remove(TKey);
-	void Print();
+	void Print(); // <<
 	void Reset();
 	void MoveNext();
 	bool IsEnded() const;
@@ -42,7 +42,7 @@ TList<TKey, TData>::TList()
 }
 
 template <class TKey, class TData>
-TList<TKey, TData>::TList(TList& copy)
+TList<TKey, TData>::TList(const TList& copy)
 {
 	if (copy.pFirst == nullptr)
 	{
@@ -93,7 +93,7 @@ TNode<TKey, TData>* TList<TKey, TData>::Search(TKey key)
 {
 	if (pFirst == nullptr) return nullptr;
 	TNode<TKey, TData>* tmp = pFirst;
-	while (tmp != nullptr)
+	while (tmp != nullptr) // && (tmp ->key != key)
 	{
 		if (tmp->key == key)
 			return tmp;
@@ -138,14 +138,14 @@ void TList<TKey, TData>::InsertEnd(TKey newKey, TData* newData)
 template <class TKey, class TData>
 void TList<TKey, TData>::InsertBefore(TKey searchKey, TKey newKey, TData* newData)
 {
-	if (pFirst == nullptr) return;
+	if (pFirst == nullptr) return; // throw
 	if (pFirst->key == searchKey)
 	{
 		InsertStart(newKey, newData);
 		return;
 	}
 	TNode<TKey, TData>* tmp = pFirst;
-	while (tmp->pNext != nullptr)
+	while (tmp->pNext != nullptr) // &&
 	{
 		if (tmp->pNext->key == searchKey)
 		{
@@ -166,9 +166,9 @@ void TList<TKey, TData>::InsertBefore(TKey searchKey, TKey newKey, TData* newDat
 template <class TKey, class TData>
 void TList<TKey, TData>::InsertAfter(TKey searchKey, TKey newKey, TData* newData)
 {
-	if (pFirst == nullptr) return;
+	if (pFirst == nullptr) return; // throw
 	TNode<TKey, TData>* tmp = pFirst;
-	while (tmp != nullptr)
+	while (tmp != nullptr) // &&
 	{
 		if (tmp->key == searchKey)
 		{
@@ -187,9 +187,9 @@ void TList<TKey, TData>::InsertAfter(TKey searchKey, TKey newKey, TData* newData
 }
 
 template <class TKey, class TData>
-void TList<TKey, TData>::Remove(TKey searchKey)
+void TList<TKey, TData>::Remove(TKey searchKey) // simplify
 {
-	if (pFirst == nullptr) return;
+	if (pFirst == nullptr) return; // throw
 	if (pFirst->key == searchKey)
 	{
 		TNode<TKey, TData>* tmp = pFirst->pNext;
@@ -259,15 +259,13 @@ void TList<TKey, TData>::Reset()
 template <class TKey, class TData>
 bool TList<TKey, TData>::IsEnded() const
 {
-	if (pNext == nullptr) return true;
-	return false;
+	return (pNext == nullptr); // pCurrent
 }
 
 template <class TKey, class TData>
 bool TList<TKey, TData>::IsEmpty() const
 {
-	if (pFirst == nullptr) return true;
-	return false;
+	return (pFirst == nullptr);
 }
 
 template <class TKey, class TData>
@@ -276,7 +274,7 @@ void TList<TKey, TData>::MoveNext()
 	if (IsEnded()) throw "End of list";
 	pPrev = pCurrent;
 	pCurrent = pNext;
-	pNext = pNext->pNext;
+	pNext = pNext->pNext; // pNext == nullptr
 }
 
 template <class TKey, class TData>

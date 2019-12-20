@@ -26,7 +26,7 @@ TNode<TKey, TData>::TNode(TKey iKey, TData* iData) : key(iKey), pNext(nullptr)
 	else
 	{
 		data = new TData;
-		*data = *iData;
+		*data = *iData; /////
 	}
 }
 
@@ -37,8 +37,7 @@ TNode<TKey, TData>::TNode(const TNode<TKey, TData>& copy) : key(copy.key), pNext
 		data = nullptr;
 	else
 	{
-		data = new TData;
-		*data = *(copy.data);
+		data = new TData(*(copy.data));
 	}
 }
 

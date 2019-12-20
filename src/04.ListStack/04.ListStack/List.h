@@ -120,11 +120,7 @@ void TList<TKey, TData>::InsertEnd(TKey newKey, TData* newData)
 {
 	if (pFirst == nullptr)
 	{
-		pFirst = new TNode<TKey, TData>;
-		pFirst->data = new TData;
-		*(pFirst->data) = *newData;
-		pFirst->key = newKey;
-		pFirst->pNext = nullptr;
+		pFirst = new TNode<TKey, TData>(newKey, newData);
 		pCurrent = pFirst;
 	}
 	else

@@ -12,31 +12,24 @@ private:
 	TNode<TKey, TData>* pNext;
 	TNode<TKey, TData>* pCurrent;
 public:
-
 	TList();
 	TList(TList&);
 	TList(TNode<TKey, TData>*);
 	~TList();
-
 	TNode<TKey, TData>* Search(TKey);
-
-	void InsertStart(TKey, TData&);
-	void InsertEnd(TKey, TData&);
-	void InsertBefore(TKey search_key, TKey, TData&);
-	void InsertAfter(TKey search_key, TKey, TData&);
-
+	void InsertStart(TKey, TData*);
+	void InsertEnd(TKey, TData*);
+	void InsertBefore(TKey search_key, TKey, TData*);
+	void InsertAfter(TKey search_key, TKey, TData*);
 	void Remove(TKey);
-
 	void Print();
-
 	void Reset();
 	void MoveNext();
 	bool IsEnded() const;
+	bool IsEmpty() const;
 	TNode<TKey, TData>* Prev();
 	TNode<TKey, TData>* Current();
 	TNode<TKey, TData>* Next();
-
-	bool IsEmpty() const;
 };
 
 template <class TKey, class TData>
@@ -127,7 +120,7 @@ void TList<TKey, TData>::InsertEnd(TKey newKey, TData* newData)
 {
 	if (pFirst == nullptr)
 	{
-		pFirst = new TNode<TKey, TData>;
+		pFirst = new TNode<TKey, TData>(newKey, newData);
 		pFirst->data = new TData;
 		*(pFirst->data) = *newData;
 		pFirst->key = newKey;
@@ -150,7 +143,11 @@ template <class TKey, class TData>
 void TList<TKey, TData>::InsertBefore(TKey searchKey, TKey newKey, TData* newData)
 {
 	if (pFirst == nullptr) return;
-	if (pFirst->key == searchKey) InsertStart(newKey, newData);
+	if (pFirst->key == searchKey)
+	{
+		InsertStart(newKey, newData);
+		return;
+	}
 	TNode<TKey, TData>* tmp = pFirst;
 	while (tmp->pNext != nullptr)
 	{
@@ -209,7 +206,7 @@ void TList<TKey, TData>::Remove(TKey searchKey)
 				pNext = pCurrent->pNext;
 		}
 		delete pFirst;
-		pFirst = tmp; 
+		pFirst = tmp;
 		return;
 	}
 	if (pFirst->pNext == nullptr) return;
@@ -315,3 +312,4 @@ TNode<TKey, TData>* TList<TKey, TData>::Next()
 {
 	return pNext;
 }
+

@@ -143,7 +143,11 @@ template <class TKey, class TData>
 void TList<TKey, TData>::InsertBefore(TKey searchKey, TKey newKey, TData* newData)
 {
 	if (pFirst == nullptr) return;
-	if (pFirst->key == searchKey) InsertStart(newKey, newData);
+	if (pFirst->key == searchKey)
+	{
+		InsertStart(newKey, newData);
+		return;
+	}
 	TNode<TKey, TData>* tmp = pFirst;
 	while (tmp->pNext != nullptr)
 	{

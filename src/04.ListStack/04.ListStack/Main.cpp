@@ -291,7 +291,10 @@ int main()
 					std::cout << list.Current() << ' ';
 					list.MoveNext();
 				}
-				std::cout << list.Current();
+				std::cout << std::endl;
+				std::cout << "Prev: " << list.Prev() << std::endl;
+				std::cout << "Current: " << list.Current() << std::endl;
+				std::cout << "Next: " << list.Next() << std::endl;
 				std::cout << std::endl;
 				break;
 			}

@@ -9,7 +9,7 @@ struct TNode
 	TKey key;
 	TNode* pNext;
 
-	TNode();
+	TNode() : pNext(nullptr) { };
 	TNode(TKey, TData*);
 	TNode(const TNode<TKey, TData>&);
 	~TNode();
@@ -17,10 +17,6 @@ struct TNode
 	template <typename TKey, typename TData>
 	friend std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>* node);
 };
-
-template <class TKey, class TData>
-TNode<TKey, TData>::TNode() : pNext(nullptr)
-{ }
 
 template <class TKey, class TData>
 TNode<TKey, TData>::TNode(TKey iKey, TData* iData) : key(iKey), pNext(nullptr)

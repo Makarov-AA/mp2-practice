@@ -168,8 +168,7 @@ int main()
 						}
 						else if (comand == "Print")
 						{
-						list.Print();
-						std::cout << std::endl;
+						std::cout << list << std::endl;
 						}
 						else if (comand == "Reset")
 							list.Reset();
@@ -212,8 +211,7 @@ int main()
 					values[i][0] = i;
 					list.InsertEnd(i, values[i]);
 				}
-				list.Print();
-				std::cout << std::endl;
+				std::cout << list << std::endl;
 				std::cout << "Prev: " << list.Prev() << std::endl;
 				std::cout << "Current: " << list.Current() << std::endl;
 				std::cout << "Next: " << list.Next() << std::endl;
@@ -224,8 +222,7 @@ int main()
 					values[i][0] = -i;
 					list.InsertStart(-i, values[i]);
 				}
-				list.Print();
-				std::cout << std::endl;
+				std::cout << list << std::endl;
 				std::cout << "Prev: " << list.Prev() << std::endl;
 				std::cout << "Current: " << list.Current() << std::endl;
 				std::cout << "Next: " << list.Next() << std::endl;
@@ -234,8 +231,7 @@ int main()
 				std::cout << "Remove(-5..5): " << std::endl;
 				for (int i = -5; i < 6; i++)
 					list.Remove(i);
-				list.Print();
-				std::cout << std::endl;
+				std::cout << list << std::endl;
 				std::cout << "Prev: " << list.Prev() << std::endl;
 				std::cout << "Current: " << list.Current() << std::endl;
 				std::cout << "Next: " << list.Next() << std::endl;
@@ -246,8 +242,7 @@ int main()
 					values[i][0] = i - 5;
 					list.InsertBefore(6, i - 5, values[i]);
 				}
-				list.Print();
-				std::cout << std::endl;
+				std::cout << list << std::endl;
 				std::cout << "Prev: " << list.Prev() << std::endl;
 				std::cout << "Current: " << list.Current() << std::endl;
 				std::cout << "Next: " << list.Next() << std::endl;
@@ -258,28 +253,24 @@ int main()
 					values[i][0] = i;
 					list.InsertAfter(0, i, values[i]);
 				}
-				list.Print();
-				std::cout << std::endl;
+				std::cout << list << std::endl;
 				std::cout << "Prev: " << list.Prev() << std::endl;
 				std::cout << "Current: " << list.Current() << std::endl;
 				std::cout << "Next: " << list.Next() << std::endl;
 				std::cout << std::endl;
 				std::cout << "Copy constructor test: " << std::endl;
 				TList<int, int> copy(list);
-				copy.Print();
-				std::cout << std::endl;
+				std::cout << copy << std::endl;
 				std::cout << "list remove 0 " << std::endl;
 				list.Remove(0);
 				std::cout << "list " << std::endl;
-				list.Print();
-				std::cout << std::endl;
+				std::cout << list << std::endl;
 				std::cout << "Prev: " << list.Prev() << std::endl;
 				std::cout << "Current: " << list.Current() << std::endl;
 				std::cout << "Next: " << list.Next() << std::endl;
 				std::cout << std::endl;
 				std::cout << "copy" << std::endl;
-				copy.Print();
-				std::cout << std::endl;
+				std::cout << copy << std::endl;
 				std::cout << "Prev: " << copy.Prev() << std::endl;
 				std::cout << "Current: " << copy.Current() << std::endl;
 				std::cout << "Next: " << copy.Next() << std::endl;

@@ -24,10 +24,7 @@ TNode<TKey, TData>::TNode(TKey iKey, TData* iData) : key(iKey), pNext(nullptr)
 	if (iData == nullptr) 
 		data = nullptr;
 	else
-	{
-		data = new TData;
-		*data = *iData; /////
-	}
+		data = new TData(*iData);
 }
 
 template <class TKey, class TData>

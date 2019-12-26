@@ -36,12 +36,12 @@ int main()
 					VarValues values(post);
 					values.InputValues();
 					std::cout << "Result " << post.Compute(values) << std::endl;
-					break;
 				}
 				catch (const char* c)
 				{
 					std::cout << c << std::endl;
 				}
+				break;
 			}
 			case 2:
 			{
@@ -56,12 +56,12 @@ int main()
 					VarValues values(post);
 					values.InputValues();
 					std::cout << "Result " << post.Compute(values) << std::endl;
-					break;
 				}
 				catch (const char* c)
 				{
 					std::cout << c << std::endl;
 				}
+				break;
 			}
 			default:
 				std::cout << "Not a mode" << std::endl;

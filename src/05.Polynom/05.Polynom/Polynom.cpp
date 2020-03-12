@@ -14,7 +14,9 @@ Polynom::Symbol Polynom::Type(const char c)
 bool Polynom::Check(std::string &expr)
 {
 	if (expr.size() == 0) return false;
-	for (int i = 0; i < expr.size(); i++)
+	int i = 0;
+	while (i < expr.size()) //удаление символов ' ' и '*'
+	{
 		switch (Type(expr[i]))
 		{
 		case Symbol::incorrect:
@@ -23,8 +25,11 @@ bool Polynom::Check(std::string &expr)
 		case Symbol::trash:
 			expr.erase(i, 1);
 			break;
+		default:
+			i++;
 		}
-	if (Type(expr[0]) <= Symbol::plus_minus)
+	}
+	if (Type(expr[0]) <= Symbol::plus_minus)//Проверка первого символа
 	{
 		if ((Type(expr[0]) != Symbol::plus_minus))
 			expr.insert(0, 1, '+');
@@ -34,42 +39,22 @@ bool Polynom::Check(std::string &expr)
 	for (int i = 1; i < expr.size(); i++)
 		switch (Type(expr[i]))
 		{
-		case Symbol::plus_minus:
+		case Symbol::plus_minus: //проверка, что до и после + или - стоит переменная или цифра
 			if (Type(expr[i - 1]) > Symbol::number || Type(expr[i + 1]) > Symbol::number)
 				return false;
 			break;
-		case Symbol::degreeSign:
+		case Symbol::degreeSign: //проверка, что степень представлена единственным числом
 			if (Type(expr[i - 1]) != Symbol::variable && Type(expr[i + 1]) != Symbol::number)
 				if (Type(expr[i + 2]) == Symbol::number || Type(expr[i + 2]) == Symbol::coma)
 					return false;
 				else return false;
 			break;
-		case Symbol::coma:
+		case Symbol::coma: //проверка, что запятая (точка) разделяет два числа
 			if (Type(expr[i - 1]) != Symbol::number || Type(expr[i + 1]) != Symbol::number)
 				return false;
 			break;
 		}
 	return true;
-}
-
-void Polynom::Collect()
-{
-	if (monoms->IsEmpty()) return;
-	monoms->Reset();
-	while (monoms->Next() != nullptr)
-		if (monoms->Current()->key == monoms->Next()->key)
-		{
-			*monoms->Next() += *monoms->Current();
-			monoms->Remove(monoms->Current()->key);
-		}
-		else monoms->MoveNext();
-	monoms->Reset();
-	while (monoms->Next() != nullptr)
-	{
-		if (monoms->Current()->data == 0)
-			monoms->Remove(monoms->Current()->key);
-		monoms->MoveNext();
-	}
 }
 
 Polynom::Polynom()
@@ -79,9 +64,15 @@ Polynom::Polynom()
 
 Polynom::Polynom(TList<unsigned int, double>& list)
 {
-	monoms = new TList<unsigned int, double>(list);
-	monoms->Sort();
-	Collect();
+	monoms = new TList<unsigned int, double>;
+	if (list.IsEmpty()) return;
+	list.Reset();
+	while (!list.IsEnded())
+	{
+		if (list.Current()->data != 0.)
+			*this = *this + *(list.Current());
+		list.MoveNext();
+	}
 }
 
 Polynom::Polynom(std::string& expr)
@@ -93,8 +84,9 @@ Polynom::Polynom(std::string& expr)
 		bool minus = (expr[i] == '-');
 		unsigned int degree = 0;
 		double coef;
-		if (Type(expr[i + 1]) == Symbol::variable)
-			coef = 1;
+		if (Type(expr[i + 1]) == Symbol::variable)//считывание коэффициента
+			if (minus) coef = -1;
+			else coef = 1;
 		else
 		{
 			std::string sCoef;
@@ -116,7 +108,7 @@ Polynom::Polynom(std::string& expr)
 			}
 			coef = std::strtod(sCoef.c_str(), nullptr);
 		}
-		if (Type(expr[i + 1]) == Symbol::variable)
+		if (Type(expr[i + 1]) == Symbol::variable) //считывание степеней переменных
 			while (i < expr.size() && Type(expr[i + 1]) != Symbol::plus_minus)
 				switch (expr[i + 1])
 				{
@@ -158,15 +150,16 @@ Polynom::Polynom(std::string& expr)
 					break;
 				}
 		if (coef != 0)
-			monoms->InsertEnd(degree, coef);
+		{
+			Monom newMonom(degree, coef);
+			*this = *this + newMonom;
+		}
 	}
-	monoms->Sort();
-	Collect();
 }
 
 Polynom::Polynom(const Polynom& copy)
 {
-	monoms = new TList<unsigned int, double>(*copy.monoms);
+	monoms = new TList<unsigned int, double>(*(copy.monoms));
 }
 
 Polynom::~Polynom()
@@ -266,6 +259,52 @@ Polynom Polynom::operator*(const Polynom& polynom) const
 		monoms->MoveNext();
 	}
 	return result;
+}
+
+Polynom Polynom::operator+(const Monom& monom) const
+{
+	Polynom sum(*this);
+	if (sum.monoms->IsEmpty())
+	{
+		sum.monoms->InsertStart(monom.key, monom.data);
+		return sum;
+	}
+	sum.monoms->Reset();
+	while (!sum.monoms->IsEnded())
+	{
+		if (sum.monoms->Current()->key == monom.key)
+		{
+			*(sum.monoms->Current()) += monom;
+			if (sum.monoms->Current()->data == 0) sum.monoms->Remove(sum.monoms->Current()->key);
+			return sum;
+		}
+		else if (sum.monoms->Current()->key < monom.key)
+		{
+			sum.monoms->InsertBefore(sum.monoms->Current()->key, monom.key, monom.data);
+			return sum;
+		}
+		sum.monoms->MoveNext();
+	}
+	sum.monoms->InsertEnd(monom.key, monom.data);
+	return sum;
+}
+
+Polynom Polynom::operator-(const Monom& monom) const
+{
+	return *this + (-monom);
+}
+
+Polynom Polynom::operator*(const Monom& monom) const
+{
+	if (monom.data == 0) return Polynom();
+	Polynom mlp(*this);
+	mlp.monoms->Reset();
+	while (!mlp.monoms->IsEnded())
+	{
+		*(mlp.monoms->Current()) *= monom;
+		mlp.monoms->MoveNext();
+	}
+	return mlp;
 }
 
 Polynom Polynom::operator+(const double c) const

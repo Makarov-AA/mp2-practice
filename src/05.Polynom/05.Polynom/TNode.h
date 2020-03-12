@@ -9,13 +9,18 @@ struct TNode
 	TKey key;
 	TNode* pNext;
 
-	TNode() : pNext(nullptr) { };
-	TNode(TKey, TData);
-	TNode(const TNode<TKey, TData>&);
+	TNode() : pNext(nullptr), key(0) { };
+	TNode(TKey iKey, TData iData);
+	TNode(const TNode<TKey, TData>& copy);
 	~TNode();
+
+	const TNode<TKey, TData>& operator = (const TNode<TKey, TData>& node);
 
 	template <typename TKey, typename TData>
 	friend std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>* node);
+
+	template <typename TKey, typename TData>
+	friend std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>& node);
 };
 
 template <class TKey, class TData>
@@ -30,6 +35,15 @@ template <class TKey, class TData>
 TNode<TKey, TData>::~TNode()
 { }
 
+template <class TKey, class TData>
+const TNode<TKey, TData>& TNode<TKey, TData>::operator = (const TNode<TKey, TData>& node)
+{
+	if (this == &node) return *this;
+	key = node.key;
+	data = node.data;
+	return *this;
+}
+
 template <typename TKey, typename TData>
 std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>* node)
 {
@@ -39,5 +53,12 @@ std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>* node)
 		return out;
 	}
 	out << "[" << node->key << " : " << node->data << "]";
+	return out;
+};
+
+template <typename TKey, typename TData>
+std::ostream& operator<<(std::ostream& out, const TNode<TKey, TData>& node)
+{
+	out << "[" << node.key << " : " << node.data << "]";
 	return out;
 };

@@ -1,10 +1,5 @@
 #include "Monom.h"
 
-/*void Emptyclass::empty()
-{
-	return;
-}*/
-
 Monom::TNode(unsigned int iKey, double iData) : key(iKey), pNext(nullptr), data(iData)
 {
 	if (iKey > MAX_KEY) throw "Incorrect degrees";
@@ -54,6 +49,11 @@ Monom Monom::operator *= (const Monom& monom)
 {
 	*this = *this * monom;
 	return *this;
+}
+
+Monom Monom::operator -() const
+{
+	return Monom(key, data * -1.);
 }
 
 Monom Monom::operator * (const double c)

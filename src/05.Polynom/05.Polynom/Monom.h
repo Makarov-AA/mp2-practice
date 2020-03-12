@@ -7,12 +7,6 @@
 #define MAX_KEY 999
 #define MAX_DEG 9
 
-/*class Emptyclass
-{
-public:
-	void empty();
-};*/
-
 template<>
 struct Monom
 {
@@ -34,6 +28,8 @@ struct Monom
 	Monom operator += (const Monom& monom);
 	Monom operator -= (const Monom& monom);
 	Monom operator *= (const Monom& monom);
+
+	Monom operator -() const;
 
 	Monom operator * (const double);
 

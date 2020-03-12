@@ -22,7 +22,6 @@ private:
 	Symbol Type(const char c);
 	bool Check(std::string&);
 
-	void Collect();
 public:
 	Polynom();
 	Polynom(TList<unsigned int, double>&);
@@ -35,6 +34,10 @@ public:
 	Polynom operator-() const;
 	Polynom operator-(const Polynom&) const;
 	Polynom operator*(const Polynom&) const;
+
+	Polynom operator+(const Monom&) const;
+	Polynom operator-(const Monom&) const;
+	Polynom operator*(const Monom&) const;
 
 	Polynom operator+(const double) const;
 	Polynom operator-(const double) const;

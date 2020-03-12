@@ -6,17 +6,20 @@
 template <class TKey, class TData>
 class TList
 {
-private:
+protected:
 	TNode<TKey, TData>* pFirst;
 	TNode<TKey, TData>* pPrev;
 	TNode<TKey, TData>* pNext;
 	TNode<TKey, TData>* pCurrent;
+
 public:
 	TList();
-	TList(const TList&);
-	TList(TNode<TKey, TData>*);
+	TList(const TList& copy);
+	TList(TNode<TKey, TData>* node);
 	~TList();
+
 	TNode<TKey, TData>* Search(TKey);
+
 	void InsertStart(TKey, TData);
 	void InsertStart(TNode<TKey, TData>&);
 	void InsertEnd(TKey, TData);
@@ -25,19 +28,22 @@ public:
 	void InsertBefore(TKey search_key, TNode<TKey, TData>&);
 	void InsertAfter(TKey search_key, TKey, TData);
 	void InsertAfter(TKey search_key, TNode<TKey, TData>&);
+
 	void Remove(TKey);
+
 	void Reset();
 	void MoveNext();
+
 	bool IsEnded() const;
 	bool IsEmpty() const;
+
+	TNode<TKey, TData>* First();
 	TNode<TKey, TData>* Prev();
 	TNode<TKey, TData>* Current();
 	TNode<TKey, TData>* Next();
 
-	void Sort();
-
 	template <typename TKey, typename TData>
-	friend std::ostream& operator<<(std::ostream& out, const TList<TKey, TData> list);
+	friend std::ostream& operator<<(std::ostream& out, const TList<TKey, TData>& list);
 };
 
 template <class TKey, class TData>
@@ -282,6 +288,12 @@ void TList<TKey, TData>::MoveNext()
 }
 
 template <class TKey, class TData>
+TNode<TKey, TData>* TList<TKey, TData>::First()
+{
+	return pFirst;
+}
+
+template <class TKey, class TData>
 TNode<TKey, TData>* TList<TKey, TData>::Prev()
 {
 	return pPrev;
@@ -299,43 +311,8 @@ TNode<TKey, TData>* TList<TKey, TData>::Next()
 	return pNext;
 }
 
-template <class TKey, class TData>
-void TList<TKey, TData>::Sort()
-{
-	if (pFirst == nullptr) return;
-	if (pFirst->pNext == nullptr) return;
-	TNode<TKey, TData> *min = pFirst, *tmp1 = pFirst, *tmp2 = pFirst;
-	while (tmp1 != nullptr)
-	{
-		tmp2 = tmp1;
-		min = tmp2;
-		while (tmp2 != nullptr)
-		{
-			if (min->key > tmp2->key)
-				min = tmp2;
-			tmp2 = tmp2->pNext;
-		}
-		if (min == tmp1)
-		{
-			TKey minKey = min->key;
-			TData minData = min->data;
-			tmp1 = tmp1->pNext;
-			Remove(min->key);
-			InsertStart(minKey, minData);
-		}
-		else
-		{
-			TKey minKey = min->key;
-			TData minData = min->data;
-			Remove(min->key);
-			InsertStart(minKey, minData);
-		}
-	}
-	return;
-}
-
 template <typename TKey, typename TData>
-std::ostream& operator<<(std::ostream& out, const TList<TKey, TData> list)
+std::ostream& operator<<(std::ostream& out, const TList<TKey, TData>& list)
 {
 	if (list.pFirst == nullptr) throw "Empty list";
 	TNode<TKey, TData>* tmp = list.pFirst;
